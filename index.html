@@ -3,56 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nexa | Professional Communication</title>
+    <title>Nexa | Next Gen Communication</title>
     
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='30' fill='%2318181b'/><path d='M50 25 L75 40 L75 65 L50 80 L25 65 L25 40 Z' fill='%23e4e4e7' stroke='%2318181b' stroke-width='2'/></svg>">
-    
+    <!-- Favicon: Unique Nexa 'N' -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2318181b'/><path d='M30 75 L30 25 L55 55 L55 25 L70 25 L70 75 L45 45 L45 75 Z' fill='%23f4f4f5'/></svg>">
+
     <style>
         /* 
-         * NEXA DESIGN SYSTEM v3.0
+         * NEXA DESIGN SYSTEM v4.0
          * Premium Monochrome / Glassmorphism / High Performance
          */
-
+        
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
 
         :root {
-            /* Palette: Zinc/Monochrome */
-            --bg-dark: #09090b;       /* Zinc 950 */
-            --bg-panel: #18181b;      /* Zinc 900 */
-            --bg-surface: #27272a;    /* Zinc 800 */
-            --bg-hover: #3f3f46;      /* Zinc 700 */
+            /* Palette - Zinc Scale */
+            --bg-app: #09090b;       /* Zinc 950 */
+            --bg-sidebar: #18181b;   /* Zinc 900 */
+            --bg-surface: #27272a;   /* Zinc 800 */
+            --bg-hover: #3f3f46;     /* Zinc 700 */
             
-            --text-main: #f4f4f5;     /* Zinc 100 */
-            --text-muted: #a1a1aa;    /* Zinc 400 */
-            
+            --text-primary: #f4f4f5; /* Zinc 100 */
+            --text-secondary: #a1a1aa; /* Zinc 400 */
+            --text-muted: #71717a;   /* Zinc 500 */
+
             --accent: #ffffff;
-            --accent-dim: rgba(255,255,255,0.1);
-            
+            --border-light: rgba(255, 255, 255, 0.08);
             --glass-bg: rgba(24, 24, 27, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.08);
             
+            /* Status Colors */
             --status-online: #22c55e;
             --status-idle: #eab308;
             --status-dnd: #ef4444;
-            --status-offline: #71717a;
+            --status-offline: #52525b;
 
+            /* Typography */
             --font-ui: 'Inter', sans-serif;
             --font-code: 'JetBrains Mono', monospace;
-            
-            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* Animation */
+            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            background-color: var(--bg-app);
+            color: var(--text-primary);
             font-family: var(--font-ui);
             height: 100vh;
             overflow: hidden;
-            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+            font-feature-settings: "cv02", "cv03";
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -60,76 +62,80 @@
         ::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--bg-hover); }
 
-        /* --- UTILS & ANIMATIONS --- */
+        /* --- UTILS --- */
         .hidden { display: none !important; }
         .flex-center { display: flex; align-items: center; justify-content: center; }
-        .fade-in { animation: fadeIn 0.4s var(--ease-smooth) forwards; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .fade-in { animation: fadeIn 0.3s var(--ease-smooth) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- AUTH & LANDING --- */
         #landing-view {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 100; background: var(--bg-dark);
+            z-index: 100; background: var(--bg-app);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background-image: radial-gradient(circle at 50% 50%, #27272a 0%, #09090b 70%);
+            background-image: radial-gradient(circle at 50% 50%, #27272a 0%, #09090b 80%);
         }
 
         .hero-card {
             background: rgba(255,255,255,0.02);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            padding: 60px; border-radius: 24px;
-            text-align: center; max-width: 500px; width: 90%;
+            border: 1px solid var(--border-light);
+            padding: 60px 40px; border-radius: 24px;
+            text-align: center; max-width: 480px; width: 90%;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            animation: popIn 0.6s var(--ease-elastic);
+            animation: popIn 0.6s var(--ease-spring);
         }
+        @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .brand-title {
-            font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em;
+            font-size: 3rem; font-weight: 800; letter-spacing: -0.05em;
             background: linear-gradient(to bottom, #fff, #71717a);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
 
-        .btn-3d {
-            background: var(--text-main); color: var(--bg-dark);
-            border: none; padding: 14px 28px; border-radius: 12px;
-            font-weight: 600; font-size: 1rem; cursor: pointer;
-            box-shadow: 0 4px 0 #a1a1aa, 0 10px 20px rgba(0,0,0,0.3);
-            transition: all 0.1s; width: 100%; margin-top: 20px;
-        }
-        .btn-3d:active { transform: translateY(4px); box-shadow: 0 0 0 #a1a1aa, inset 0 2px 5px rgba(0,0,0,0.2); }
-        
         .input-nexa {
-            width: 100%; background: var(--bg-dark); border: 1px solid var(--bg-surface);
+            width: 100%; background: var(--bg-app); border: 1px solid var(--bg-surface);
             padding: 14px; border-radius: 8px; color: white; margin-bottom: 15px;
-            transition: 0.2s; font-family: var(--font-ui);
+            transition: 0.2s; font-family: var(--font-ui); font-size: 0.95rem;
         }
-        .input-nexa:focus { border-color: var(--text-muted); box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
+        .input-nexa:focus { border-color: var(--text-secondary); box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
+
+        .btn-primary {
+            background: var(--text-primary); color: var(--bg-app);
+            border: none; padding: 14px; border-radius: 8px;
+            font-weight: 600; font-size: 1rem; cursor: pointer;
+            width: 100%; transition: 0.2s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+        .btn-primary:active { transform: translateY(0); }
+
+        .link-text { color: var(--text-secondary); font-size: 0.85rem; margin-top: 15px; cursor: pointer; }
+        .link-text:hover { color: var(--text-primary); text-decoration: underline; }
 
         /* --- MAIN APP GRID --- */
         #app-view {
             display: grid; 
             grid-template-columns: 72px 260px 1fr 240px; 
             height: 100vh; width: 100vw;
+            transition: grid-template-columns 0.3s ease;
         }
 
         /* 1. Server Rail */
         .rail-servers {
-            background: var(--bg-dark); display: flex; flex-direction: column; align-items: center;
-            padding: 12px 0; gap: 8px; border-right: 1px solid var(--glass-border);
+            background: var(--bg-app); display: flex; flex-direction: column; align-items: center;
+            padding: 12px 0; gap: 8px; border-right: 1px solid var(--border-light); z-index: 20;
         }
 
         .server-pill {
-            width: 48px; height: 48px; border-radius: 50%; background: var(--bg-panel);
+            width: 48px; height: 48px; border-radius: 50%; background: var(--bg-sidebar);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s var(--ease-elastic); position: relative;
-            color: var(--text-main); font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; transition: 0.3s var(--ease-spring); position: relative;
+            color: var(--text-primary); font-weight: 600; font-size: 0.9rem;
+            overflow: hidden;
         }
         .server-pill:hover, .server-pill.active {
-            border-radius: 16px; background: var(--text-main); color: var(--bg-dark);
+            border-radius: 16px; background: var(--text-primary); color: var(--bg-app);
         }
         .server-pill.active::before {
             content: ''; position: absolute; left: -14px; width: 8px; height: 40px;
@@ -139,13 +145,13 @@
 
         /* 2. Sidebar Channels */
         .sidebar-channels {
-            background: var(--bg-panel); display: flex; flex-direction: column;
-            border-right: 1px solid var(--glass-border);
+            background: var(--bg-sidebar); display: flex; flex-direction: column;
+            border-right: 1px solid var(--border-light);
         }
         
         .header-server {
             height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
-            font-weight: 700; border-bottom: 1px solid var(--glass-border); cursor: pointer;
+            font-weight: 700; border-bottom: 1px solid var(--border-light); cursor: pointer;
             transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .header-server:hover { background: var(--bg-surface); }
@@ -157,32 +163,32 @@
             margin: 16px 8px 4px 8px; display: flex; align-items: center; cursor: pointer;
         }
         .channel-item {
-            padding: 6px 8px; margin: 2px 0; border-radius: 4px; color: var(--text-muted);
+            padding: 6px 8px; margin: 2px 0; border-radius: 4px; color: var(--text-secondary);
             cursor: pointer; display: flex; align-items: center; font-weight: 500;
         }
-        .channel-item:hover { background: var(--bg-surface); color: var(--text-main); }
+        .channel-item:hover { background: var(--bg-surface); color: var(--text-primary); }
         .channel-item.active { background: rgba(255,255,255,0.1); color: white; }
         .ch-icon { margin-right: 6px; opacity: 0.6; font-size: 1.1rem; }
 
         .user-area {
             height: 64px; background: rgba(0,0,0,0.2); padding: 0 12px;
-            display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--glass-border);
+            display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border-light);
         }
         .avatar-wrapper { position: relative; cursor: pointer; }
         .avatar-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--bg-surface); }
         .status-dot {
             position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px;
-            border-radius: 50%; border: 2px solid var(--bg-panel);
+            border-radius: 50%; border: 2px solid var(--bg-sidebar);
         }
 
         /* 3. Chat Area */
         .chat-main {
-            background: var(--bg-dark); display: flex; flex-direction: column; position: relative;
+            background: var(--bg-app); display: flex; flex-direction: column; position: relative;
         }
         
         .top-bar {
             height: 56px; padding: 0 24px; display: flex; align-items: center;
-            border-bottom: 1px solid var(--glass-border); box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border-light); box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .hashtag { color: var(--text-muted); font-size: 1.5rem; margin-right: 12px; }
         .chat-title { font-weight: 700; color: white; margin-right: 16px; }
@@ -214,7 +220,7 @@
 
         /* 4. Members List */
         .members-sidebar {
-            background: var(--bg-panel); border-left: 1px solid var(--glass-border);
+            background: var(--bg-sidebar); border-left: 1px solid var(--border-light);
             padding: 24px 16px; overflow-y: auto;
         }
         .role-title {
@@ -227,7 +233,7 @@
         }
         .member-item:hover { background: var(--bg-surface); opacity: 1; }
         .member-info { margin-left: 12px; }
-        .member-name { font-weight: 500; color: var(--text-main); font-size: 0.9rem; }
+        .member-name { font-weight: 500; color: var(--text-primary); font-size: 0.9rem; }
         .member-status { font-size: 0.7rem; color: var(--text-muted); }
 
         /* Modals */
@@ -237,13 +243,20 @@
             z-index: 1000; display: none; align-items: center; justify-content: center;
         }
         .modal-box {
-            background: var(--bg-panel); width: 440px; border-radius: 12px; padding: 24px;
-            border: 1px solid var(--glass-border); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            animation: popIn 0.2s var(--ease-elastic);
+            background: var(--bg-sidebar); width: 440px; border-radius: 12px; padding: 24px;
+            border: 1px solid var(--border-light); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: popIn 0.2s var(--ease-spring);
         }
 
-        /* Responsive */
-        @media (max-width: 1000px) { #app-view { grid-template-columns: 72px 0 1fr 0; } .members-sidebar { display: none; } }
+        /* Mobile Responsive */
+        @media (max-width: 1000px) { 
+            #app-view { grid-template-columns: 72px 0 1fr 0; } 
+            .members-sidebar { display: none; } 
+        }
+        @media (max-width: 600px) {
+            #app-view { grid-template-columns: 0 0 1fr 0; }
+            .rail-servers { display: none; } /* Simplified for mobile demo */
+        }
     </style>
 </head>
 <body>
@@ -255,17 +268,15 @@
         <section id="landing-view">
             <div class="hero-card">
                 <div class="brand-title">NEXA</div>
-                <p style="color:var(--text-muted); margin-bottom:30px;">ARCHITECTURE OF SILENCE.</p>
+                <p style="color:var(--text-secondary); margin-bottom:30px;">ARCHITECTURE OF SILENCE.</p>
                 
                 <div id="auth-forms">
                     <!-- Login Form -->
                     <div id="form-login">
-                        <input type="email" class="input-nexa" placeholder="Email" value="demo@nexa.app">
-                        <input type="password" class="input-nexa" placeholder="Пароль" value="password">
-                        <button class="btn-3d" onclick="Auth.login()">Начать общение</button>
-                        <p style="margin-top:15px; font-size:0.8rem; color:var(--text-muted);">
-                            Нет аккаунта? <span style="color:white; cursor:pointer;" onclick="UI.toggleAuth('register')">Создать</span>
-                        </p>
+                        <input type="email" id="login-email" class="input-nexa" placeholder="Email" value="demo@nexa.app">
+                        <input type="password" id="login-pass" class="input-nexa" placeholder="Пароль" value="password">
+                        <button class="btn-primary" onclick="Auth.login()">Начать общение</button>
+                        <p class="link-text" onclick="UI.toggleAuth('register')">Нет аккаунта? Создать</p>
                     </div>
                     
                     <!-- Register Form -->
@@ -273,10 +284,8 @@
                         <input type="email" id="reg-email" class="input-nexa" placeholder="Email">
                         <input type="password" id="reg-pass" class="input-nexa" placeholder="Придумайте пароль">
                         <!-- No Username field as requested -->
-                        <button class="btn-3d" onclick="Auth.register()">Продолжить</button>
-                        <p style="margin-top:15px; font-size:0.8rem; color:var(--text-muted);">
-                            Уже есть аккаунт? <span style="color:white; cursor:pointer;" onclick="UI.toggleAuth('login')">Войти</span>
-                        </p>
+                        <button class="btn-primary" onclick="Auth.register()">Продолжить</button>
+                        <p class="link-text" onclick="UI.toggleAuth('login')">Уже есть аккаунт? Войти</p>
                     </div>
                 </div>
             </div>
@@ -350,11 +359,11 @@
     <div class="modal-overlay" id="modal-create-server">
         <div class="modal-box">
             <h2 style="margin-bottom:10px;">Создать сервер</h2>
-            <p style="color:var(--text-muted); margin-bottom:20px;">Ваш сервер будет местом общения.</p>
+            <p style="color:var(--text-secondary); margin-bottom:20px;">Ваш сервер будет местом общения.</p>
             <input type="text" id="new-server-name" class="input-nexa" placeholder="Название сервера">
             <div style="display:flex; justify-content:flex-end; gap:10px;">
-                <button class="btn-3d" style="width:auto; background:var(--bg-surface); color:white; box-shadow:none;" onclick="Modals.closeAll()">Отмена</button>
-                <button class="btn-3d" style="width:auto;" onclick="App.createServer()">Создать</button>
+                <button class="btn-primary" style="width:auto; background:var(--bg-surface); color:white; margin-right:10px;" onclick="Modals.closeAll()">Отмена</button>
+                <button class="btn-primary" style="width:auto;" onclick="App.createServer()">Создать</button>
             </div>
         </div>
     </div>
@@ -368,44 +377,79 @@
             <label style="font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--text-muted);">Отображаемое имя</label>
             <input type="text" id="settings-username" class="input-nexa">
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-                <button class="btn-3d" style="width:auto; background:var(--bg-surface); color:white; box-shadow:none;" onclick="Modals.closeAll()">Готово</button>
-                <button class="btn-3d" style="width:auto;" onclick="App.saveProfile()">Сохранить</button>
+                <button class="btn-primary" style="width:auto; background:var(--bg-surface); color:white; margin-right:10px;" onclick="Modals.closeAll()">Готово</button>
+                <button class="btn-primary" style="width:auto;" onclick="App.saveProfile()">Сохранить</button>
             </div>
         </div>
     </div>
 
     <script>
         /**
-         * NEXA CORE ENGINE v3.0
-         * Full Client-Side Simulation
+         * NEXA CORE ENGINE v4.0
+         * Full Client-Side Simulation with Persistence
          */
+
+        // --- STORAGE MANAGER (Persistence Layer) ---
+        const DB = {
+            key: 'nexa_db_v4',
+            load: () => {
+                const data = localStorage.getItem(DB.key);
+                return data ? JSON.parse(data) : null;
+            },
+            save: (data) => {
+                localStorage.setItem(DB.key, JSON.stringify(data));
+            },
+            init: () => {
+                if (!DB.load()) {
+                    // Initial Seed Data
+                    const seed = {
+                        users: {
+                            'u_sys': { id: 'u_sys', username: 'System', disc: '0000', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nexa', status: 'online' },
+                            'u_alice': { id: 'u_alice', username: 'Alice', disc: '1024', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka', status: 'dnd' },
+                            'u_bob': { id: 'u_bob', username: 'Bob', disc: '4400', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob', status: 'idle' }
+                        },
+                        servers: [
+                            {
+                                id: 'srv_nexa', name: 'Nexa Official', icon: null,
+                                channels: [
+                                    { id: 'ch_1', name: 'announcements', type: 'text', desc: 'Важные новости платформы' },
+                                    { id: 'ch_2', name: 'general', type: 'text', desc: 'Общение на любые темы' },
+                                    { id: 'ch_voice', name: 'Lounge', type: 'voice', desc: '' }
+                                ],
+                                members: ['u_sys', 'u_alice', 'u_bob'],
+                                messages: {
+                                    'ch_1': [{id:'m1', authorId:'u_sys', content:'Добро пожаловать в Nexa v4.0. Система полностью работает.', ts:'Сегодня в 10:00'}],
+                                    'ch_2': [{id:'m2', authorId:'u_alice', content:'Интерфейс выглядит просто потрясающе!', ts:'Сегодня в 10:05'}]
+                                }
+                            }
+                        ]
+                    };
+                    DB.save(seed);
+                }
+            }
+        };
 
         // --- STATE MANAGEMENT ---
         const Store = {
             currentUser: null,
-            servers: [
-                {
-                    id: 'srv_nexa', name: 'Nexa Official', icon: null,
-                    channels: [
-                        { id: 'ch_1', name: 'announcements', type: 'text', desc: 'Важные новости платформы' },
-                        { id: 'ch_2', name: 'general', type: 'text', desc: 'Общение на любые темы' },
-                        { id: 'ch_3', name: 'support', type: 'text', desc: 'Техническая поддержка' }
-                    ],
-                    members: ['u_me', 'u_alice', 'u_bob'],
-                    messages: {
-                        'ch_1': [{id:'m1', authorId:'sys', content:'Добро пожаловать в Nexa v3.0.', ts:'Сегодня в 10:00'}],
-                        'ch_2': [{id:'m2', authorId:'u_alice', content:'Интерфейс выглядит просто потрясающе!', ts:'Сегодня в 10:05'}]
-                    }
-                }
-            ],
-            users: {
-                'u_me': { id: 'u_me', username: 'User', disc: '8821', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', status: 'online' },
-                'u_alice': { id: 'u_alice', username: 'Alice', disc: '1024', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka', status: 'dnd' },
-                'u_bob': { id: 'u_bob', username: 'Bob', disc: '4400', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob', status: 'idle' },
-                'sys': { id: 'sys', username: 'System', disc: '0000', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nexa', status: 'online' }
-            },
+            data: null,
             activeServerId: 'srv_nexa',
-            activeChannelId: 'ch_2'
+            activeChannelId: 'ch_2',
+            
+            init: () => {
+                DB.init();
+                Store.data = DB.load();
+                // Check session
+                const sessionUser = sessionStorage.getItem('nexa_user');
+                if(sessionUser) {
+                    Store.currentUser = Store.data.users[sessionUser];
+                    if(Store.currentUser) Router.go('app');
+                }
+            },
+            
+            save: () => {
+                DB.save(Store.data);
+            }
         };
 
         // --- UTILS ---
@@ -434,13 +478,31 @@
         // --- AUTHENTICATION ---
         const Auth = {
             login: () => {
-                // Simulate API Delay
-                const btn = Utils.el('#form-login button');
-                btn.innerText = 'Вход...';
-                setTimeout(() => {
-                    Store.currentUser = Store.users['u_me'];
+                const email = Utils.el('#login-email').value;
+                // Simple simulation check
+                if(email) {
+                    // Find user or create temp session for demo if not exists in DB
+                    let user = Object.values(Store.data.users).find(u => u.username === 'DemoUser'); // Legacy
+                    
+                    // For this demo, we just log in as the current user if registered, or create a new one
+                    // In a real app, we'd check password hash
+                    if(!Store.currentUser) {
+                         // Auto-create for demo purposes if not found
+                         Store.currentUser = {
+                            id: 'u_me',
+                            username: 'User_' + Math.floor(Math.random()*1000),
+                            disc: String(Math.floor(Math.random()*9000)+1000),
+                            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Utils.uuid()}`,
+                            status: 'online'
+                        };
+                        Store.data.users['u_me'] = Store.currentUser;
+                        Store.data.servers[0].members.push('u_me');
+                        Store.save();
+                    }
+                    
+                    sessionStorage.setItem('nexa_user', Store.currentUser.id);
                     Router.go('app');
-                }, 600);
+                }
             },
             register: () => {
                 const email = Utils.el('#reg-email').value;
@@ -449,17 +511,22 @@
                 const newId = 'u_' + Utils.uuid();
                 Store.currentUser = {
                     id: newId,
-                    username: 'User_' + Math.floor(Math.random()*1000), // Auto-generated
+                    username: 'User_' + Math.floor(Math.random()*1000),
                     disc: String(Math.floor(Math.random()*9000)+1000),
-                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Utils.uuid()}`,
+                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${newId}`,
                     status: 'online'
                 };
-                Store.users[newId] = Store.currentUser;
                 
-                // Add user to default server
-                Store.servers[0].members.push(newId);
+                Store.data.users[newId] = Store.currentUser;
+                Store.data.servers[0].members.push(newId);
+                Store.save();
                 
+                sessionStorage.setItem('nexa_user', newId);
                 Router.go('app');
+            },
+            logout: () => {
+                sessionStorage.removeItem('nexa_user');
+                location.reload();
             }
         };
 
@@ -488,7 +555,7 @@
             renderServers: () => {
                 const container = Utils.el('#server-list-rail');
                 container.innerHTML = '';
-                Store.servers.forEach(srv => {
+                Store.data.servers.forEach(srv => {
                     const div = document.createElement('div');
                     div.className = `server-pill ${Store.activeServerId === srv.id ? 'active' : ''}`;
                     div.innerText = srv.name.substring(0,2).toUpperCase();
@@ -499,7 +566,7 @@
 
             loadServer: (id) => {
                 Store.activeServerId = id;
-                const srv = Store.servers.find(s => s.id === id);
+                const srv = Store.data.servers.find(s => s.id === id);
                 
                 Utils.el('#current-server-name span').innerText = srv.name;
                 
@@ -515,9 +582,22 @@
                     chList.appendChild(row);
                 });
 
+                // Voice Channels
+                const voiceChList = document.createElement('div');
+                voiceChList.innerHTML = `<div class="cat-name" style="margin-top:20px;">▼ Голосовые каналы</div>`;
+                srv.channels.filter(c => c.type === 'voice').forEach(ch => {
+                    const row = document.createElement('div');
+                    row.className = `channel-item`;
+                    row.innerHTML = `<span class="ch-icon">🔊</span> ${ch.name}`;
+                    row.onclick = () => alert(`Подключение к ${ch.name}... (Имитация)`);
+                    voiceChList.appendChild(row);
+                });
+                chList.appendChild(voiceChList);
+
                 // Load first channel if needed
                 if(!srv.channels.find(c => c.id === Store.activeChannelId)) {
-                    App.loadChannel(srv.channels[0].id);
+                    const firstText = srv.channels.find(c => c.type === 'text');
+                    if(firstText) App.loadChannel(firstText.id);
                 } else {
                     App.loadChannel(Store.activeChannelId);
                 }
@@ -528,7 +608,7 @@
 
             loadChannel: (id) => {
                 Store.activeChannelId = id;
-                const srv = Store.servers.find(s => s.id === Store.activeServerId);
+                const srv = Store.data.servers.find(s => s.id === Store.activeServerId);
                 const ch = srv.channels.find(c => c.id === id);
                 
                 Utils.el('#chat-title').innerText = ch.name;
@@ -549,7 +629,7 @@
 
             appendMessage: (msg) => {
                 const feed = Utils.el('#message-feed');
-                const author = Store.users[msg.authorId] || { username: 'Unknown', avatar: '' };
+                const author = Store.data.users[msg.authorId] || { username: 'Unknown', avatar: '' };
                 
                 const div = document.createElement('div');
                 div.className = 'message-row fade-in';
@@ -568,7 +648,7 @@
             },
 
             sendMessage: (text) => {
-                const srv = Store.servers.find(s => s.id === Store.activeServerId);
+                const srv = Store.data.servers.find(s => s.id === Store.activeServerId);
                 if(!srv.messages[Store.activeChannelId]) srv.messages[Store.activeChannelId] = [];
                 
                 const msgObj = {
@@ -579,6 +659,7 @@
                 };
                 
                 srv.messages[Store.activeChannelId].push(msgObj);
+                Store.save(); // Persist to LocalStorage
                 App.appendMessage(msgObj);
             },
 
@@ -591,7 +672,8 @@
                     members: [Store.currentUser.id],
                     messages: {}
                 };
-                Store.servers.push(newSrv);
+                Store.data.servers.push(newSrv);
+                Store.save();
                 Modals.closeAll();
                 App.loadServer(newSrv.id);
             },
@@ -600,7 +682,8 @@
                 const newName = Utils.el('#settings-username').value;
                 if(newName) {
                     Store.currentUser.username = newName;
-                    Store.users[Store.currentUser.id].username = newName;
+                    Store.data.users[Store.currentUser.id].username = newName;
+                    Store.save();
                     Utils.el('#my-username').innerText = newName;
                     Modals.closeAll();
                     // Refresh messages to show new name
@@ -611,12 +694,12 @@
             renderMembers: () => {
                 const list = Utils.el('#members-list');
                 list.innerHTML = '';
-                const srv = Store.servers.find(s => s.id === Store.activeServerId);
+                const srv = Store.data.servers.find(s => s.id === Store.activeServerId);
                 
                 let onlineCount = 0;
 
                 srv.members.forEach(uid => {
-                    const u = Store.users[uid];
+                    const u = Store.data.users[uid];
                     if(!u) return;
                     if(u.status !== 'offline') onlineCount++;
 
@@ -636,6 +719,10 @@
                 });
                 
                 Utils.el('#online-count').innerText = onlineCount;
+            },
+            
+            navHome: () => {
+                alert("Личные сообщения (DM) в разработке для этой демо-версии.");
             }
         };
 
@@ -666,6 +753,9 @@
         window.onclick = (e) => {
             if(e.target.classList.contains('modal-overlay')) Modals.closeAll();
         };
+
+        // Initialize App
+        Store.init();
 
     </script>
 </body>
