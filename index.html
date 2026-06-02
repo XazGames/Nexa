@@ -2,82 +2,635 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nexa — Премиальное общение</title>
-    <!-- Favicon (SVG inline) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231e1e1e'/%3E%3Cpath d='M10 20 L16 8 L22 20 Z' fill='none' stroke='%23e0e0e0' stroke-width='2.5' stroke-linejoin='round'/%3E%3Ccircle cx='10' cy='20' r='2' fill='%23e0e0e0'/%3E%3Ccircle cx='22' cy='20' r='2' fill='%23e0e0e0'/%3E%3C/svg%3E">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexa | Future Communication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
-        /* ----- СБРОС И БАЗА ----- */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg-primary: #0c0c0c;
-            --bg-secondary: #141414;
-            --bg-glass: rgba(255,255,255,0.04);
-            --border-glass: rgba(255,255,255,0.08);
-            --text-primary: #f2f2f2;
-            --text-secondary: #a0a0a0;
-            --accent: #7a7a7a;
-            --accent-hover: #9a9a9a;
-            --online: #3ba55d;
-            --idle: #faa81a;
-            --dnd: #ed4245;
-            --offline: #747f8d;
-            --shadow-lg: 0 20px 60px rgba(0,0,0,0.7);
-            --radius: 12px;
-            --radius-sm: 8px;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --bg-dark: #0a0a0b;
+            --bg-panel: rgba(20, 20, 23, 0.7);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --accent-neon: #ffffff;
+            --accent-glow: rgba(255, 255, 255, 0.15);
+            --text-main: #ececec;
+            --text-muted: #949ba4;
+            --danger: #ff4d4d;
+            --success: #3fb950;
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+            --shadow-3d: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --neon-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
         }
-        html, body { height: 100%; font-family: var(--font); background: var(--bg-primary); color: var(--text-primary); overflow: hidden; }
-        a { color: inherit; text-decoration: none; }
-        button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; color: inherit; }
-        input { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
-        ::-webkit-scrollbar { width: 6px; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(50, 50, 50, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(30, 30, 30, 0.2) 0%, transparent 40%);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
-        /* ----- СТАРТОВЫЙ ЭКРАН (Splash) ----- */
-        #splash {
-            position: fixed; inset: 0; z-index: 1000;
-            background: var(--bg-primary);
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* App Layout */
+        #app {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Auth Screen */
+        #auth-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 9999;
             display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            flex-direction: column;
         }
-        #splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        #splash-bg {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at 30% 40%, #1e1e1e, #0a0a0a);
-            filter: blur(40px) brightness(0.5);
-            transform: scale(1.1);
-        }
-        #splash-content {
-            position: relative; z-index: 2;
-            display: flex; flex-direction: column; align-items: center; gap: 32px;
+        
+        .glass-card {
+            background: var(--bg-panel);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             text-align: center;
-            animation: fadeUp 1s ease forwards;
         }
-        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
-        .splash-logo { font-size: 64px; font-weight: 800; letter-spacing: -0.03em; color: white; text-shadow: 0 0 40px rgba(255,255,255,0.1); }
-        .splash-logo span { color: var(--accent); }
-        .splash-desc { font-size: 18px; color: var(--text-secondary); max-width: 400px; line-height: 1.6; }
-        .splash-actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
-        .btn-primary, .btn-secondary {
-            padding: 12px 32px; border-radius: 40px; font-size: 16px; font-weight: 600;
-            transition: all 0.25s ease; letter-spacing: 0.01em;
+
+        .logo-text {
+            font-size: 3rem; font-weight: 700; letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(255,255,255,0.3);
         }
-        .btn-primary { background: white; color: black; box-shadow: 0 4px 20px rgba(255,255,255,0.15); }
-        .btn-primary:hover { transform: scale(1.04); box-shadow: 0 8px 30px rgba(255,255,255,0.25); }
-        .btn-secondary { border: 1px solid var(--border-glass); background: var(--bg-glass); backdrop-filter: blur(8px); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-        /* ----- ОСНОВНОЙ ИНТЕРФЕЙС (скрыт до старта) ----- */
-        #app { display: none; height: 100vh; }
-        #app.active { display: flex; }
-        /* Левый сайдбар (каналы) */
-        .sidebar-left { width: 280px; min-width: 280px; background: var(--bg-secondary); display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.04); }
-        .sidebar-header { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: space-between; }
-        .sidebar-header h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
-        .sidebar-header .icon { font-size: 20px; opacity: 0.5; transition: 0.2s; }
-        .sidebar-header .icon:hover { opacity: 1; }
-        .channel-list { flex: 1; overflow-y: auto; padding: 8px 0; }
-        .channel-item { padding: 8px 20px; display: flex; align-items: center; gap: 10px; color: var(--text-secondary); font-size: 15px; border-radius: 0; transition: 0.15s; cursor: pointer; }
-        .channel-item:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
-        .channel-item.active { color: white; background: rgba(255,255,255,0.06); }
-        .channel-item .
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 8px; }
+        .nexa-input {
+            width: 100%; padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px; color: white;
+            transition: 0.3s;
+        }
+        .nexa-input:focus { border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+
+        .btn-3d {
+            background: white; color: black;
+            border: none; padding: 12px 24px;
+            border-radius: 8px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 0 #ccc, 0 5px 10px rgba(0,0,0,0.3);
+            transition: all 0.1s; width: 100%;
+        }
+        .btn-3d:active { transform: translateY(4px); box-shadow: 0 0 0 #ccc, inset 0 2px 5px rgba(0,0,0,0.2); }
+
+        /* Main Interface */
+        .sidebar-servers {
+            width: 72px; background: rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 12px 0; border-right: 1px solid var(--border-glass);
+            z-index: 10;
+        }
+
+        .server-icon {
+            width: 48px; height: 48px;
+            background: var(--bg-glass);
+            border-radius: 50%;
+            margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            border: 1px solid transparent;
+        }
+        .server-icon:hover {
+            border-radius: 16px; background: white; color: black;
+            box-shadow: 0 0 20px rgba(255,255,255,0.4);
+        }
+        .server-icon.active { border-radius: 16px; background: white; color: black; }
+        .server-icon img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+        
+        .separator { width: 32px; height: 2px; background: var(--border-glass); margin: 8px 0; }
+
+        .sidebar-channels {
+            width: 240px; background: rgba(15, 15, 18, 0.6);
+            display: flex; flex-direction: column;
+            border-right: 1px solid var(--border-glass);
+        }
+
+        .channel-header {
+            height: 50px; padding: 0 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border-glass);
+            font-weight: 600; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .channel-list { flex: 1; padding: 10px 8px; overflow-y: auto; }
+        
+        .category-name {
+            font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;
+            font-weight: 700; margin: 16px 8px 4px 8px; display: flex; align-items: center;
+        }
+        .category-name:hover { color: white; }
+
+        .channel-item {
+            padding: 6px 8px; margin-bottom: 2px; border-radius: 4px;
+            color: var(--text-muted); cursor: pointer; display: flex; align-items: center;
+            transition: 0.2s;
+        }
+        .channel-item:hover { background: var(--bg-glass); color: white; }
+        .channel-item.active { background: rgba(255,255,255,0.1); color: white; }
+        .channel-hash { margin-right: 6px; opacity: 0.5; }
+
+        .user-panel-mini {
+            height: 60px; background: rgba(0,0,0,0.3);
+            display: flex; align-items: center; padding: 0 10px;
+            border-top: 1px solid var(--border-glass);
+        }
+        .avatar-wrapper { position: relative; margin-right: 10px; }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; background: #333; object-fit: cover;}
+        .status-dot {
+            position: absolute; bottom: -2px; right: -2px;
+            width: 12px; height: 12px; border-radius: 50%;
+            border: 2px solid #111;
+        }
+        .status-online { background: var(--success); }
+        .status-idle { background: #faa61a; }
+        .status-dnd { background: var(--danger); }
+
+        .chat-area {
+            flex: 1; background: rgba(20, 20, 23, 0.4);
+            display: flex; flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            height: 50px; padding: 0 20px;
+            display: flex; align-items: center;
+            border-bottom: 1px solid var(--border-glass);
+            background: rgba(10, 10, 11, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        .header-hash { font-size: 1.5rem; color: var(--text-muted); margin-right: 10px; }
+        .header-title { font-weight: 700; color: white; margin-right: 15px; }
+        .header-desc { font-size: 0.85rem; color: var(--text-muted); border-left: 1px solid var(--border-glass); padding-left: 15px; }
+
+        .messages-wrapper {
+            flex: 1; overflow-y: auto; padding: 20px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .message {
+            display: flex; margin-top: 5px; animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .msg-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; margin-top: 2px; cursor: pointer; }
+        .msg-content { flex: 1; }
+        .msg-header { display: flex; align-items: baseline; margin-bottom: 4px; }
+        .msg-author { font-weight: 600; color: white; margin-right: 8px; cursor: pointer; }
+        .msg-author:hover { text-decoration: underline; }
+        .msg-time { font-size: 0.7rem; color: var(--text-muted); }
+        .msg-text { color: #dcddde; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+        
+        .input-area {
+            padding: 0 20px 20px 20px;
+        }
+        .input-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px; padding: 12px 16px;
+            display: flex; align-items: center;
+            border: 1px solid transparent; transition: 0.2s;
+        }
+        .input-box:focus-within { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); }
+        .chat-input {
+            flex: 1; background: transparent; border: none; color: white; font-size: 1rem;
+        }
+        .attach-btn { color: var(--text-muted); cursor: pointer; margin-right: 15px; font-size: 1.2rem; }
+        .attach-btn:hover { color: white; }
+
+        .members-sidebar {
+            width: 240px; background: rgba(10, 10, 11, 0.6);
+            border-left: 1px solid var(--border-glass);
+            padding: 20px 10px; overflow-y: auto;
+            display: none; /* Hidden on small screens */
+        }
+        @media(min-width: 1000px) { .members-sidebar { display: block; } }
+
+        .role-group { margin-bottom: 20px; }
+        .role-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; text-transform: uppercase; }
+        .member-item {
+            display: flex; align-items: center; padding: 6px 8px;
+            border-radius: 4px; cursor: pointer; opacity: 0.9;
+        }
+        .member-item:hover { background: var(--bg-glass); opacity: 1; }
+        .member-name { font-weight: 500; color: #fff; margin-left: 10px; }
+        .member-status { font-size: 0.75rem; color: var(--text-muted); display: block; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 1000; display: none; align-items: center; justify-content: center;
+        }
+        .modal {
+            background: #18191c; border: 1px solid var(--border-glass);
+            width: 440px; border-radius: 12px; padding: 24px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal h2 { margin-bottom: 10px; color: white; }
+        .modal p { color: var(--text-muted); margin-bottom: 20px; }
+
+        /* Utility classes */
+        .hidden { display: none !important; }
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+        .icon-plus::before { content: '+'; font-size: 20px; }
+        
+        /* Neon Button Effect */
+        .btn-neon {
+            background: transparent; border: 1px solid white; color: white;
+            padding: 8px 16px; border-radius: 4px; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+        }
+        .btn-neon:hover { background: white; color: black; box-shadow: 0 0 20px white; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+        <div class="logo-text">NEXA</div>
+        <p style="color:var(--text-muted); margin-bottom: 30px;">NEXT GEN COMMUNICATION PLATFORM</p>
+        
+        <div class="glass-card" id="login-form">
+            <h2 style="margin-bottom: 20px;">Вход в систему</h2>
+            <div class="input-group">
+                <label>Email или Никнейм</label>
+                <input type="text" class="nexa-input" placeholder="user@nexa.app" value="demo_user">
+            </div>
+            <div class="input-group">
+                <label>Пароль</label>
+                <input type="password" class="nexa-input" placeholder="••••••••" value="password">
+            </div>
+            <button class="btn-3d" onclick="App.login()">ВОЙТИ</button>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: var(--text-muted);">
+                Нет аккаунта? <span style="color: white; cursor: pointer;" onclick="alert('Регистрация симулирована')">Создать</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="hidden">
+        
+        <!-- Server Sidebar -->
+        <nav class="sidebar-servers">
+            <div class="server-icon active" onclick="App.switchServer('home')" title="Личные сообщения">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+            </div>
+            <div class="separator"></div>
+            
+            <!-- Dynamic Servers will be injected here -->
+            <div id="server-list-container"></div>
+
+            <div class="server-icon" onclick="App.openCreateServerModal()" title="Создать сервер">
+                <span class="icon-plus" style="color: var(--success);"></span>
+            </div>
+        </nav>
+
+        <!-- Channel Sidebar -->
+        <aside class="sidebar-channels">
+            <div class="channel-header">
+                <span id="current-server-name">Главная</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            
+            <div class="channel-list" id="channel-list-container">
+                <!-- Channels injected via JS -->
+            </div>
+
+            <div class="user-panel-mini">
+                <div class="avatar-wrapper">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="avatar" id="my-avatar">
+                    <div class="status-dot status-online"></div>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-weight:600; font-size:0.9rem;" id="my-username">User</div>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">#Online</div>
+                </div>
+                <div style="display:flex; gap:10px; color:white;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Chat Area -->
+        <main class="chat-area">
+            <header class="chat-header">
+                <span class="header-hash">#</span>
+                <span class="header-title" id="chat-title">general</span>
+                <span class="header-desc" id="chat-desc">Общий чат для всех участников</span>
+            </header>
+
+            <div class="messages-wrapper" id="messages-container">
+                <!-- Messages go here -->
+            </div>
+
+            <div class="input-area">
+                <div class="input-box">
+                    <span class="attach-btn">+</span>
+                    <input type="text" class="chat-input" id="message-input" placeholder="Написать сообщение..." autocomplete="off">
+                    <div style="display:flex; gap:15px; color:var(--text-muted);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Members Sidebar -->
+        <aside class="members-sidebar">
+            <div class="role-group">
+                <div class="role-title">Администраторы — 1</div>
+                <div class="member-item">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NexaBot" class="avatar" style="width:32px;height:32px;">
+                    <div class="member-name" style="color:#ff4d4d;">Nexa System</div>
+                    <span class="member-status">Играет в Code</span>
+                </div>
+            </div>
+            <div class="role-group">
+                <div class="role-title">Онлайн — 3</div>
+                <div class="member-item">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="avatar" style="width:32px;height:32px;">
+                    <div class="member-name">Вы</div>
+                </div>
+                <div class="member-item">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" class="avatar" style="width:32px;height:32px;">
+                    <div class="member-name">Alice</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Create Server Modal -->
+    <div class="modal-overlay" id="create-server-modal">
+        <div class="modal">
+            <h2>Создать сервер</h2>
+            <p>Ваш сервер будет местом, где вы общаетесь с друзьями. Настройте его под себя.</p>
+            <div class="input-group">
+                <label>Название сервера</label>
+                <input type="text" class="nexa-input" id="new-server-name" placeholder="Мой крутой сервер">
+            </div>
+            <div style="display:flex; gap:10px; justify-content: flex-end; margin-top:20px;">
+                <button class="btn-neon" style="border:none; color:var(--text-muted);" onclick="document.getElementById('create-server-modal').style.display='none'">Отмена</button>
+                <button class="btn-3d" style="width:auto;" onclick="App.createServer()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- NEXA CORE ENGINE --- //
+        
+        const Utils = {
+            generateId: () => Math.random().toString(36).substr(2, 9),
+            getTime: () => {
+                const now = new Date();
+                return `Сегодня в ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            },
+            randomItem: (arr) => arr[Math.floor(Math.random() * arr.length)]
+        };
+
+        const Store = {
+            currentUser: {
+                id: 'u_me', username: 'DemoUser', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', status: 'online'
+            },
+            servers: [
+                {
+                    id: 's_1', name: 'Cyber Lounge', icon: null, 
+                    channels: [
+                        { id: 'c_1', name: 'general', type: 'text', desc: 'Общение обо всем' },
+                        { id: 'c_2', name: 'memes', type: 'text', desc: 'Только мемы' },
+                        { id: 'c_3', name: 'music', type: 'voice', desc: '' }
+                    ],
+                    messages: {
+                        'c_1': [
+                            { id: 'm_1', author: 'System', text: 'Добро пожаловать в Cyber Lounge!', time: '10:00', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=1' },
+                            { id: 'm_2', author: 'Alice', text: 'Привет всем! Как дизайн?', time: '10:05', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka' }
+                        ]
+                    }
+                },
+                {
+                    id: 's_2', name: 'Dev Team', icon: null,
+                    channels: [
+                        { id: 'c_4', name: 'announcements', type: 'text', desc: 'Важные новости' },
+                        { id: 'c_5', name: 'coding', type: 'text', desc: 'Обсуждение кода' }
+                    ],
+                    messages: {
+                        'c_4': [{ id: 'm_3', author: 'Boss', text: 'Релиз Nexa переносится на пятницу.', time: '09:00', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob' }]
+                    }
+                }
+            ],
+            activeServerId: 's_1',
+            activeChannelId: 'c_1'
+        };
+
+        const App = {
+            init: () => {
+                App.renderServers();
+                App.renderChannels();
+                App.renderMessages();
+                
+                // Event Listeners
+                document.getElementById('message-input').addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') App.sendMessage(this.value);
+                });
+            },
+
+            login: () => {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                App.init();
+            },
+
+            renderServers: () => {
+                const container = document.getElementById('server-list-container');
+                container.innerHTML = '';
+                Store.servers.forEach(server => {
+                    const el = document.createElement('div');
+                    el.className = `server-icon ${Store.activeServerId === server.id ? 'active' : ''}`;
+                    // Placeholder icons based on name hash
+                    const hue = server.name.length * 20;
+                    el.style.backgroundColor = server.id === Store.activeServerId ? 'white' : `hsl(${hue}, 60%, 40%)`;
+                    
+                    el.onclick = () => App.switchServer(server.id);
+                    el.innerHTML = `<span style="color:${server.id === Store.activeServerId ? 'black' : 'white'}; font-weight:bold;">${server.name.substring(0,2).toUpperCase()}</span>`;
+                    container.appendChild(el);
+                });
+            },
+
+            switchServer: (serverId) => {
+                Store.activeServerId = serverId;
+                if(serverId === 'home') {
+                    document.getElementById('current-server-name').innerText = "Личные сообщения";
+                    document.getElementById('channel-list-container').innerHTML = '<div style="padding:10px; color:#666;">Нет активных чатов</div>';
+                    document.getElementById('messages-container').innerHTML = '';
+                    return;
+                }
+
+                const server = Store.servers.find(s => s.id === serverId);
+                document.getElementById('current-server-name').innerText = server.name;
+                
+                // Set first channel as active
+                if (server.channels.length > 0) {
+                    Store.activeChannelId = server.channels[0].id;
+                }
+
+                App.renderServers();
+                App.renderChannels();
+                App.renderMessages();
+            },
+
+            renderChannels: () => {
+                const container = document.getElementById('channel-list-container');
+                container.innerHTML = '';
+                
+                if(Store.activeServerId === 'home') return;
+
+                const server = Store.servers.find(s => s.id === Store.activeServerId);
+                
+                // Group by Text/Voice (Simplified for demo)
+                const textHeader = document.createElement('div');
+                textHeader.className = 'category-name';
+                textHeader.innerHTML = '<span style="margin-right:4px;">▼</span> Текстовые каналы';
+                container.appendChild(textHeader);
+
+                server.channels.filter(c => c.type === 'text').forEach(channel => {
+                    const el = document.createElement('div');
+                    el.className = `channel-item ${Store.activeChannelId === channel.id ? 'active' : ''}`;
+                    el.innerHTML = `<span class="channel-hash">#</span> ${channel.name}`;
+                    el.onclick = () => App.switchChannel(channel.id);
+                    container.appendChild(el);
+                });
+
+                const voiceHeader = document.createElement('div');
+                voiceHeader.className = 'category-name';
+                voiceHeader.innerHTML = '<span style="margin-right:4px;">▼</span> Голосовые каналы';
+                container.appendChild(voiceHeader);
+
+                server.channels.filter(c => c.type === 'voice').forEach(channel => {
+                    const el = document.createElement('div');
+                    el.className = 'channel-item';
+                    el.innerHTML = `<span class="channel-hash">🔊</span> ${channel.name}`;
+                    container.appendChild(el);
+                });
+            },
+
+            switchChannel: (channelId) => {
+                Store.activeChannelId = channelId;
+                App.renderChannels();
+                App.renderMessages();
+                
+                const server = Store.servers.find(s => s.id === Store.activeServerId);
+                const channel = server.channels.find(c => c.id === channelId);
+                
+                document.getElementById('chat-title').innerText = channel.name;
+                document.getElementById('chat-desc').innerText = channel.desc || '';
+            },
+
+            renderMessages: () => {
+                const container = document.getElementById('messages-container');
+                container.innerHTML = '';
+                
+                if(Store.activeServerId === 'home') return;
+
+                const server = Store.servers.find(s => s.id === Store.activeServerId);
+                const messages = server.messages[Store.activeChannelId] || [];
+
+                if(messages.length === 0) {
+                    container.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--text-muted);">Начало истории канала.<br>Будьте первым, кто напишет!</div>`;
+                    return;
+                }
+
+                messages.forEach(msg => {
+                    const el = document.createElement('div');
+                    el.className = 'message';
+                    el.innerHTML = `
+                        <img src="${msg.avatar}" class="msg-avatar">
+                        <div class="msg-content">
+                            <div class="msg-header">
+                                <span class="msg-author">${msg.author}</span>
+                                <span class="msg-time">${msg.time}</span>
+                            </div>
+                            <div class="msg-text">${msg.text}</div>
+                        </div>
+                    `;
+                    container.appendChild(el);
+                });
+                
+                // Scroll to bottom
+                container.scrollTop = container.scrollHeight;
+            },
+
+            sendMessage: (text) => {
+                if(!text.trim()) return;
+                
+                const server = Store.servers.find(s => s.id === Store.activeServerId);
+                if(!server.messages[Store.activeChannelId]) server.messages[Store.activeChannelId] = [];
+
+                const newMessage = {
+                    id: Utils.generateId(),
+                    author: Store.currentUser.username,
+                    text: text,
+                    time: Utils.getTime(),
+                    avatar: Store.currentUser.avatar
+                };
+
+                server.messages[Store.activeChannelId].push(newMessage);
+                App.renderMessages();
+                document.getElementById('message-input').value = '';
+            },
+
+            openCreateServerModal: () => {
+                document.getElementById('create-server-modal').style.display = 'flex';
+            },
+
+            createServer: () => {
+                const nameInput = document.getElementById('new-server-name');
+                const name = nameInput.value || 'Новый Сервер';
+                
+                const newServer = {
+                    id: Utils.generateId(),
+                    name: name,
+                    icon: null,
+                    channels: [
+                        { id: Utils.generateId(), name: 'general', type: 'text', desc: 'Добро пожаловать' }
+                    ],
+                    messages: {}
+                };
+
+                Store.servers.push(newServer);
+                nameInput.value = '';
+                document.getElementById('create-server-modal').style.display = 'none';
+                App.switchServer(newServer.id);
+            }
+        };
+
+        // Initial mock data injection
+        console.log("Nexa Core Loaded.");
+    </script>
+</body>
+</html>
