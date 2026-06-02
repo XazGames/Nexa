@@ -3,560 +3,408 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nexa | The Future of Connection</title>
+    <title>Nexa | Professional Communication</title>
     
-    <!-- Favicon Generation via Code -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%2318181b'/><path d='M30 35 L70 50 L30 65 Z' fill='white'/></svg>">
-
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='30' fill='%2318181b'/><path d='M50 25 L75 40 L75 65 L50 80 L25 65 L25 40 Z' fill='%23e4e4e7' stroke='%2318181b' stroke-width='2'/></svg>">
+    
     <style>
         /* 
-         * NEXA DESIGN SYSTEM 2026 
-         * Palette: Zinc / Monochrome / Neon White
+         * NEXA DESIGN SYSTEM v3.0
+         * Premium Monochrome / Glassmorphism / High Performance
          */
-        
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+
         :root {
-            /* Colors - Zinc Scale */
-            --zinc-950: #09090b;
-            --zinc-900: #18181b;
-            --zinc-800: #27272a;
-            --zinc-700: #3f3f46;
-            --zinc-500: #71717a;
-            --zinc-400: #a1a1aa;
-            --zinc-100: #f4f4f5;
-            --white: #ffffff;
+            /* Palette: Zinc/Monochrome */
+            --bg-dark: #09090b;       /* Zinc 950 */
+            --bg-panel: #18181b;      /* Zinc 900 */
+            --bg-surface: #27272a;    /* Zinc 800 */
+            --bg-hover: #3f3f46;      /* Zinc 700 */
             
-            /* Semantic Colors */
-            --bg-app: var(--zinc-950);
-            --bg-surface: rgba(24, 24, 27, 0.65);
-            --bg-surface-hover: rgba(39, 39, 42, 0.8);
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --border-active: rgba(255, 255, 255, 0.15);
+            --text-main: #f4f4f5;     /* Zinc 100 */
+            --text-muted: #a1a1aa;    /* Zinc 400 */
             
-            /* Accents */
-            --accent-glow: 0 0 20px rgba(255, 255, 255, 0.15);
-            --text-primary: var(--zinc-100);
-            --text-secondary: var(--zinc-400);
+            --accent: #ffffff;
+            --accent-dim: rgba(255,255,255,0.1);
             
-            /* Statuses */
+            --glass-bg: rgba(24, 24, 27, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
             --status-online: #22c55e;
             --status-idle: #eab308;
             --status-dnd: #ef4444;
-            --status-offline: var(--zinc-500);
+            --status-offline: #71717a;
 
-            /* Typography */
-            --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-
-            /* Animation Curves */
-            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
-            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --font-ui: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+            
+            --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: var(--bg-app);
-            color: var(--text-primary);
-            font-family: var(--font-display);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-ui);
             height: 100vh;
             overflow: hidden;
-            font-smooth: always;
-            -webkit-font-smoothing: antialiased;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
         }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--bg-hover); }
 
         /* --- UTILS & ANIMATIONS --- */
         .hidden { display: none !important; }
-        .fade-enter { animation: fadeIn 0.6s var(--ease-out-expo) forwards; }
-        .slide-up { animation: slideUp 0.5s var(--ease-out-expo) forwards; }
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+        .fade-in { animation: fadeIn 0.4s var(--ease-smooth) forwards; }
         
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(2); opacity: 0; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* --- SCROLLBAR --- */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--zinc-700); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--zinc-500); }
-
-        /* --- ROUTER VIEWS --- */
-        #view-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-        /* --- LANDING PAGE --- */
+        /* --- AUTH & LANDING --- */
         #landing-view {
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            position: relative; z-index: 1;
-        }
-        
-        #canvas-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; filter: blur(60px); opacity: 0.4;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 100; background: var(--bg-dark);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-image: radial-gradient(circle at 50% 50%, #27272a 0%, #09090b 70%);
         }
 
-        .landing-content {
-            text-align: center; z-index: 2;
-            backdrop-filter: blur(10px);
-            padding: 60px;
-            border-radius: 24px;
-            border: 1px solid var(--border-subtle);
-            background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%);
-            max-width: 600px;
+        .hero-card {
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 60px; border-radius: 24px;
+            text-align: center; max-width: 500px; width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            animation: popIn 0.6s var(--ease-elastic);
         }
 
-        .brand-logo-lg {
-            font-size: 4rem; font-weight: 800; letter-spacing: -0.05em;
-            background: linear-gradient(180deg, #fff 0%, #71717a 100%);
+        .brand-title {
+            font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em;
+            background: linear-gradient(to bottom, #fff, #71717a);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 0 30px rgba(255,255,255,0.2));
+            margin-bottom: 10px;
         }
 
-        .tagline {
-            font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 3rem;
-            font-weight: 300; letter-spacing: 0.05em;
+        .btn-3d {
+            background: var(--text-main); color: var(--bg-dark);
+            border: none; padding: 14px 28px; border-radius: 12px;
+            font-weight: 600; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 4px 0 #a1a1aa, 0 10px 20px rgba(0,0,0,0.3);
+            transition: all 0.1s; width: 100%; margin-top: 20px;
         }
-
-        .btn-group { display: flex; gap: 16px; justify-content: center; }
-
-        .nexa-btn {
-            padding: 14px 32px; border-radius: 12px; font-weight: 600; cursor: pointer;
-            transition: all 0.3s var(--ease-spring); font-size: 1rem; border: none;
-            position: relative; overflow: hidden;
-        }
-
-        .btn-primary {
-            background: var(--white); color: var(--zinc-950);
-            box-shadow: 0 10px 30px -10px rgba(255,255,255,0.3);
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -10px rgba(255,255,255,0.5); }
+        .btn-3d:active { transform: translateY(4px); box-shadow: 0 0 0 #a1a1aa, inset 0 2px 5px rgba(0,0,0,0.2); }
         
-        .btn-secondary {
-            background: rgba(255,255,255,0.05); color: var(--white);
-            border: 1px solid var(--border-subtle);
+        .input-nexa {
+            width: 100%; background: var(--bg-dark); border: 1px solid var(--bg-surface);
+            padding: 14px; border-radius: 8px; color: white; margin-bottom: 15px;
+            transition: 0.2s; font-family: var(--font-ui);
         }
-        .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--white); }
+        .input-nexa:focus { border-color: var(--text-muted); box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
 
-        /* --- AUTH PAGES --- */
-        .auth-wrapper {
-            display: flex; align-items: center; justify-content: center;
-            height: 100vh; background: var(--bg-app);
+        /* --- MAIN APP GRID --- */
+        #app-view {
+            display: grid; 
+            grid-template-columns: 72px 260px 1fr 240px; 
+            height: 100vh; width: 100vw;
         }
-        
-        .auth-card {
-            width: 420px; padding: 40px;
-            background: var(--zinc-900);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .auth-header h2 { font-size: 1.5rem; margin-bottom: 8px; color: var(--white); }
-        .auth-header p { color: var(--text-secondary); margin-bottom: 24px; font-size: 0.9rem; }
-
-        .input-field {
-            width: 100%; background: var(--zinc-950); border: 1px solid var(--zinc-800);
-            padding: 12px 16px; border-radius: 8px; color: white; margin-bottom: 16px;
-            transition: 0.2s; font-family: var(--font-display);
-        }
-        .input-field:focus { border-color: var(--zinc-500); box-shadow: 0 0 0 2px rgba(113, 113, 122, 0.2); }
-        .input-label { display: block; color: var(--zinc-400); font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
-
-        /* --- MAIN APP INTERFACE --- */
-        #app-view { display: grid; grid-template-columns: 72px 240px 1fr 240px; height: 100vh; }
 
         /* 1. Server Rail */
         .rail-servers {
-            background: var(--zinc-950); display: flex; flex-direction: column; align-items: center;
-            padding: 12px 0; gap: 8px; border-right: 1px solid var(--border-subtle);
+            background: var(--bg-dark); display: flex; flex-direction: column; align-items: center;
+            padding: 12px 0; gap: 8px; border-right: 1px solid var(--glass-border);
         }
 
-        .nav-item {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: var(--zinc-900); color: var(--text-primary);
+        .server-pill {
+            width: 48px; height: 48px; border-radius: 50%; background: var(--bg-panel);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s var(--ease-spring);
-            position: relative; overflow: hidden;
+            cursor: pointer; transition: 0.3s var(--ease-elastic); position: relative;
+            color: var(--text-main); font-weight: 600; font-size: 0.9rem;
         }
-        .nav-item:hover { border-radius: 16px; background: var(--white); color: black; }
-        .nav-item.active { border-radius: 16px; background: var(--white); color: black; }
-        .nav-item.active::before {
-            content: ''; position: absolute; left: -16px; top: 50%; transform: translateY(-50%);
-            width: 8px; height: 32px; background: white; border-radius: 0 4px 4px 0;
+        .server-pill:hover, .server-pill.active {
+            border-radius: 16px; background: var(--text-main); color: var(--bg-dark);
         }
-        .nav-icon { width: 24px; height: 24px; fill: currentColor; }
-        .nav-sep { width: 32px; height: 2px; background: var(--zinc-800); margin: 4px 0; border-radius: 1px; }
+        .server-pill.active::before {
+            content: ''; position: absolute; left: -14px; width: 8px; height: 40px;
+            background: white; border-radius: 0 4px 4px 0;
+        }
+        .nav-sep { width: 32px; height: 2px; background: var(--bg-surface); margin: 4px 0; border-radius: 1px; }
 
         /* 2. Sidebar Channels */
         .sidebar-channels {
-            background: var(--zinc-900); display: flex; flex-direction: column;
-            border-right: 1px solid var(--border-subtle);
+            background: var(--bg-panel); display: flex; flex-direction: column;
+            border-right: 1px solid var(--glass-border);
         }
-
-        .server-header {
+        
+        .header-server {
             height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
-            font-weight: 600; font-size: 0.95rem; border-bottom: 1px solid var(--border-subtle);
-            cursor: pointer; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            font-weight: 700; border-bottom: 1px solid var(--glass-border); cursor: pointer;
+            transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        .server-header:hover { background: var(--bg-surface-hover); }
+        .header-server:hover { background: var(--bg-surface); }
 
-        .channels-scroll { flex: 1; overflow-y: auto; padding: 16px 8px; }
+        .channels-list { flex: 1; overflow-y: auto; padding: 16px 8px; }
         
-        .channel-cat {
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--zinc-500);
-            margin: 16px 8px 4px 8px; display: flex; align-items: center;
-            cursor: pointer;
+        .cat-name {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);
+            margin: 16px 8px 4px 8px; display: flex; align-items: center; cursor: pointer;
         }
-        .channel-cat:hover { color: var(--text-primary); }
-        
-        .channel-row {
-            padding: 6px 8px; margin: 1px 0; border-radius: 4px;
-            color: var(--zinc-400); cursor: pointer; display: flex; align-items: center;
-            font-weight: 500; font-size: 0.95rem;
+        .channel-item {
+            padding: 6px 8px; margin: 2px 0; border-radius: 4px; color: var(--text-muted);
+            cursor: pointer; display: flex; align-items: center; font-weight: 500;
         }
-        .channel-row:hover { background: var(--bg-surface-hover); color: var(--text-primary); }
-        .channel-row.active { background: rgba(255,255,255,0.08); color: var(--white); }
+        .channel-item:hover { background: var(--bg-surface); color: var(--text-main); }
+        .channel-item.active { background: rgba(255,255,255,0.1); color: white; }
         .ch-icon { margin-right: 6px; opacity: 0.6; font-size: 1.1rem; }
 
-        .user-panel {
+        .user-area {
             height: 64px; background: rgba(0,0,0,0.2); padding: 0 12px;
-            display: flex; align-items: center; gap: 12px;
-            border-top: 1px solid var(--border-subtle);
+            display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--glass-border);
         }
-        .avatar-wrap { position: relative; cursor: pointer; }
-        .avatar-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--zinc-800); }
-        .status-indicator {
-            position: absolute; bottom: -2px; right: -2px;
-            width: 14px; height: 14px; border-radius: 50%;
-            border: 3px solid var(--zinc-900);
+        .avatar-wrapper { position: relative; cursor: pointer; }
+        .avatar-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--bg-surface); }
+        .status-dot {
+            position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px;
+            border-radius: 50%; border: 2px solid var(--bg-panel);
         }
-        .st-online { background: var(--status-online); }
-        .st-dnd { background: var(--status-dnd); }
-        
-        .user-info { flex: 1; overflow: hidden; }
-        .user-name { font-size: 0.9rem; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-tag { font-size: 0.75rem; color: var(--text-secondary); }
 
         /* 3. Chat Area */
-        .chat-area {
-            background: var(--bg-app); display: flex; flex-direction: column;
-            position: relative;
+        .chat-main {
+            background: var(--bg-dark); display: flex; flex-direction: column; position: relative;
         }
-
+        
         .top-bar {
             height: 56px; padding: 0 24px; display: flex; align-items: center;
-            border-bottom: 1px solid var(--border-subtle);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--glass-border); box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .hashtag { color: var(--zinc-500); font-size: 1.5rem; margin-right: 12px; }
-        .ch-title { font-weight: 700; color: white; margin-right: 16px; }
-        .ch-desc { color: var(--text-secondary); font-size: 0.85rem; border-left: 1px solid var(--zinc-700); padding-left: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;}
+        .hashtag { color: var(--text-muted); font-size: 1.5rem; margin-right: 12px; }
+        .chat-title { font-weight: 700; color: white; margin-right: 16px; }
+        .chat-desc { color: var(--text-muted); font-size: 0.85rem; border-left: 1px solid var(--bg-surface); padding-left: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 
-        .messages-list {
-            flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 4px;
+        .messages-container {
+            flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column;
         }
 
-        .msg {
-            display: flex; margin-top: 16px; padding: 2px 0;
-            transition: background 0.1s;
+        .message-row {
+            display: flex; margin-top: 16px; padding: 2px 0; group;
         }
-        .msg:hover { background: rgba(255,255,255,0.02); }
-        .msg-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 16px; cursor: pointer; transition: 0.2s; }
-        .msg-avatar:hover { opacity: 0.8; }
-        
+        .msg-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 16px; cursor: pointer; }
         .msg-body { flex: 1; min-width: 0; }
-        .msg-head { display: flex; align-items: baseline; margin-bottom: 4px; }
+        .msg-header { display: flex; align-items: baseline; margin-bottom: 4px; }
         .msg-author { font-weight: 600; color: white; margin-right: 8px; cursor: pointer; }
         .msg-author:hover { text-decoration: underline; }
-        .msg-ts { font-size: 0.7rem; color: var(--zinc-500); }
-        .msg-content { color: #dcddde; line-height: 1.45; font-size: 0.95rem; word-break: break-word; }
+        .msg-date { font-size: 0.7rem; color: var(--text-muted); }
+        .msg-text { color: #dcddde; line-height: 1.45; font-size: 0.95rem; word-break: break-word; white-space: pre-wrap; }
 
-        .input-wrapper { padding: 0 24px 24px 24px; }
-        .chat-input-box {
-            background: var(--zinc-800); border-radius: 8px; padding: 12px 16px;
-            display: flex; align-items: center; min-height: 48px;
+        .input-area { padding: 0 24px 24px 24px; }
+        .input-wrapper {
+            background: var(--bg-surface); border-radius: 8px; padding: 12px 16px;
+            display: flex; align-items: center;
         }
         .chat-input {
             flex: 1; background: transparent; border: none; color: white; font-size: 1rem;
-            font-family: var(--font-display);
         }
-        .input-actions { display: flex; gap: 12px; color: var(--zinc-400); }
-        .input-icon { cursor: pointer; transition: 0.2s; }
-        .input-icon:hover { color: var(--text-primary); }
 
         /* 4. Members List */
         .members-sidebar {
-            background: var(--zinc-900); border-left: 1px solid var(--border-subtle);
+            background: var(--bg-panel); border-left: 1px solid var(--glass-border);
             padding: 24px 16px; overflow-y: auto;
         }
-        .role-header {
+        .role-title {
             font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-            color: var(--zinc-500); margin-bottom: 12px;
+            color: var(--text-muted); margin-bottom: 12px;
         }
-        .member-card {
+        .member-item {
             display: flex; align-items: center; padding: 6px 8px; border-radius: 4px;
             cursor: pointer; opacity: 0.9; margin-bottom: 2px;
         }
-        .member-card:hover { background: var(--bg-surface-hover); opacity: 1; }
-        .member-avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 12px; position: relative;}
-        .member-name { font-weight: 500; color: var(--zinc-300); font-size: 0.9rem; }
-        .member-card:hover .member-name { color: white; }
-        .member-activity { font-size: 0.7rem; color: var(--text-secondary); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+        .member-item:hover { background: var(--bg-surface); opacity: 1; }
+        .member-info { margin-left: 12px; }
+        .member-name { font-weight: 500; color: var(--text-main); font-size: 0.9rem; }
+        .member-status { font-size: 0.7rem; color: var(--text-muted); }
 
-        /* --- MODALS --- */
+        /* Modals */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-            z-index: 1000; display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: 0.3s;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 1000; display: none; align-items: center; justify-content: center;
         }
-        .modal-overlay.open { opacity: 1; pointer-events: all; }
-        
         .modal-box {
-            background: var(--zinc-900); width: 440px; border-radius: 12px;
-            padding: 24px; transform: scale(0.95); transition: 0.3s var(--ease-spring);
-            border: 1px solid var(--border-subtle); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            background: var(--bg-panel); width: 440px; border-radius: 12px; padding: 24px;
+            border: 1px solid var(--glass-border); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: popIn 0.2s var(--ease-elastic);
         }
-        .modal-overlay.open .modal-box { transform: scale(1); }
-        
-        .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
-        .modal-text { color: var(--text-secondary); text-align: center; margin-bottom: 24px; font-size: 0.9rem; }
 
-        /* Context Menu */
-        #ctx-menu {
-            position: fixed; background: var(--zinc-800); border: 1px solid var(--border-subtle);
-            border-radius: 6px; padding: 6px; width: 180px; z-index: 2000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none;
-        }
-        .ctx-item {
-            padding: 8px 10px; font-size: 0.85rem; color: var(--zinc-300); cursor: pointer; border-radius: 4px;
-        }
-        .ctx-item:hover { background: var(--danger); color: white; }
-        .ctx-item.safe:hover { background: var(--zinc-700); color: white; }
-
-        /* Responsive Fixes */
-        @media (max-width: 1000px) {
-            #app-view { grid-template-columns: 72px 0 1fr 0; }
-            .members-sidebar { display: none; }
-        }
+        /* Responsive */
+        @media (max-width: 1000px) { #app-view { grid-template-columns: 72px 0 1fr 0; } .members-sidebar { display: none; } }
     </style>
 </head>
 <body>
 
-    <!-- BACKGROUND CANVAS FOR LANDING -->
-    <canvas id="canvas-bg"></canvas>
-
     <!-- VIEW CONTAINER -->
     <div id="view-container">
         
-        <!-- 1. LANDING VIEW -->
-        <section id="landing-view" class="fade-enter">
-            <div class="landing-content slide-up">
-                <div class="brand-logo-lg">NEXA</div>
-                <p class="tagline">ARCHITECTURE OF SILENCE. SPEED OF THOUGHT.</p>
-                <div class="btn-group">
-                    <button class="nexa-btn btn-primary" onclick="Router.go('register')">Начать общение</button>
-                    <button class="nexa-btn btn-secondary" onclick="Router.go('login')">Войти</button>
+        <!-- 1. LANDING / AUTH -->
+        <section id="landing-view">
+            <div class="hero-card">
+                <div class="brand-title">NEXA</div>
+                <p style="color:var(--text-muted); margin-bottom:30px;">ARCHITECTURE OF SILENCE.</p>
+                
+                <div id="auth-forms">
+                    <!-- Login Form -->
+                    <div id="form-login">
+                        <input type="email" class="input-nexa" placeholder="Email" value="demo@nexa.app">
+                        <input type="password" class="input-nexa" placeholder="Пароль" value="password">
+                        <button class="btn-3d" onclick="Auth.login()">Начать общение</button>
+                        <p style="margin-top:15px; font-size:0.8rem; color:var(--text-muted);">
+                            Нет аккаунта? <span style="color:white; cursor:pointer;" onclick="UI.toggleAuth('register')">Создать</span>
+                        </p>
+                    </div>
+                    
+                    <!-- Register Form -->
+                    <div id="form-register" class="hidden">
+                        <input type="email" id="reg-email" class="input-nexa" placeholder="Email">
+                        <input type="password" id="reg-pass" class="input-nexa" placeholder="Придумайте пароль">
+                        <!-- No Username field as requested -->
+                        <button class="btn-3d" onclick="Auth.register()">Продолжить</button>
+                        <p style="margin-top:15px; font-size:0.8rem; color:var(--text-muted);">
+                            Уже есть аккаунт? <span style="color:white; cursor:pointer;" onclick="UI.toggleAuth('login')">Войти</span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 2. LOGIN VIEW -->
-        <section id="login-view" class="hidden auth-wrapper">
-            <div class="auth-card slide-up">
-                <div class="auth-header">
-                    <h2>С возвращением</h2>
-                    <p>Мы так рады видеть вас снова!</p>
-                </div>
-                <form onsubmit="Auth.login(event)">
-                    <label class="input-label">Email или номер телефона</label>
-                    <input type="text" class="input-field" required>
-                    <label class="input-label">Пароль</label>
-                    <input type="password" class="input-field" required>
-                    <button type="submit" class="nexa-btn btn-primary" style="width:100%; margin-top:10px;">Войти</button>
-                </form>
-                <div style="margin-top:12px; font-size:0.8rem; color:var(--zinc-500);">
-                    Нужен аккаунт? <span style="color:var(--white); cursor:pointer;" onclick="Router.go('register')">Регистрация</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. REGISTER VIEW -->
-        <section id="register-view" class="hidden auth-wrapper">
-            <div class="auth-card slide-up">
-                <div class="auth-header">
-                    <h2>Создать аккаунт</h2>
-                    <p>Присоединяйтесь к будущему коммуникаций.</p>
-                </div>
-                <form onsubmit="Auth.register(event)">
-                    <label class="input-label">Email</label>
-                    <input type="email" class="input-field" required>
-                    <label class="input-label">Пароль</label>
-                    <input type="password" class="input-field" required>
-                    <!-- NO USERNAME FIELD as requested -->
-                    <button type="submit" class="nexa-btn btn-primary" style="width:100%; margin-top:10px;">Продолжить</button>
-                </form>
-                <div style="margin-top:12px; font-size:0.8rem; color:var(--zinc-500);">
-                    Уже есть аккаунт? <span style="color:var(--white); cursor:pointer;" onclick="Router.go('login')">Войти</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. MAIN APP VIEW -->
+        <!-- 2. MAIN APPLICATION -->
         <section id="app-view" class="hidden">
             
             <!-- Server Rail -->
             <nav class="rail-servers">
-                <div class="nav-item active" onclick="App.navHome()" title="Личные сообщения">
-                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+                <div class="server-pill active" onclick="App.navHome()" title="Личные сообщения">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
                 </div>
                 <div class="nav-sep"></div>
                 <div id="server-list-rail"></div>
-                <div class="nav-item" onclick="Modals.openCreateServer()" style="color: var(--status-online);">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                <div class="server-pill" onclick="Modals.openCreateServer()" style="color:var(--status-online)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
                 </div>
             </nav>
 
             <!-- Channel Sidebar -->
             <aside class="sidebar-channels">
-                <div class="server-header" id="current-server-name">
-                    <span>Nexa Community</span>
+                <div class="header-server" id="current-server-name">
+                    <span>Загрузка...</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
-                <div class="channels-scroll" id="channel-list">
-                    <!-- Injected via JS -->
-                </div>
+                <div class="channels-list" id="channel-list"></div>
                 
-                <div class="user-panel">
-                    <div class="avatar-wrap" onclick="Modals.openSettings()">
+                <div class="user-area">
+                    <div class="avatar-wrapper" onclick="Modals.openSettings()">
                         <img src="" id="my-avatar" class="avatar-img">
-                        <div class="status-indicator st-online"></div>
+                        <div class="status-dot" style="background:var(--status-online)"></div>
                     </div>
-                    <div class="user-info">
-                        <div class="user-name" id="my-username">User</div>
-                        <div class="user-tag">#<span id="my-discriminator">0000</span></div>
+                    <div style="flex:1; overflow:hidden;">
+                        <div style="font-weight:600; font-size:0.9rem; white-space:nowrap;" id="my-username">User</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">#<span id="my-discriminator">0000</span></div>
                     </div>
                     <div style="display:flex; gap:8px;">
-                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; color:var(--text-secondary)"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; color:var(--text-muted)"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
                     </div>
                 </div>
             </aside>
 
             <!-- Main Chat -->
-            <main class="chat-area">
+            <main class="chat-main">
                 <header class="top-bar">
                     <span class="hashtag">#</span>
-                    <span class="ch-title" id="chat-title">general</span>
-                    <span class="ch-desc" id="chat-desc">Общий чат</span>
+                    <span class="chat-title" id="chat-title">general</span>
+                    <span class="chat-desc" id="chat-desc">Описание канала</span>
                 </header>
                 
-                <div class="messages-list" id="message-feed">
-                    <!-- Messages injected here -->
-                </div>
+                <div class="messages-container" id="message-feed"></div>
 
-                <div class="input-wrapper">
-                    <div class="chat-input-box">
-                        <div class="input-actions" style="margin-right:12px; font-size:1.5rem; cursor:pointer;">+</div>
+                <div class="input-area">
+                    <div class="input-wrapper">
+                        <div style="margin-right:12px; font-size:1.5rem; cursor:pointer; color:var(--text-muted);">+</div>
                         <input type="text" class="chat-input" id="msg-input" placeholder="Написать сообщение..." autocomplete="off">
-                        <div class="input-actions">
-                            <svg class="input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                            <svg class="input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
-                        </div>
                     </div>
                 </div>
             </main>
 
             <!-- Members -->
             <aside class="members-sidebar">
-                <div class="role-header">Online — 3</div>
-                <div class="member-card">
-                    <div class="member-avatar">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="avatar-img">
-                        <div class="status-indicator st-online" style="width:10px; height:10px; border-width:2px;"></div>
-                    </div>
-                    <div>
-                        <div class="member-name" style="color:#fff;">Вы</div>
-                        <span class="member-activity">VS Code</span>
-                    </div>
-                </div>
-                <div class="member-card">
-                    <div class="member-avatar">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" class="avatar-img">
-                        <div class="status-indicator st-dnd" style="width:10px; height:10px; border-width:2px;"></div>
-                    </div>
-                    <div>
-                        <div class="member-name">Alice</div>
-                        <span class="member-activity">Spotify</span>
-                    </div>
-                </div>
+                <div class="role-title">В сети — <span id="online-count">0</span></div>
+                <div id="members-list"></div>
             </aside>
         </section>
     </div>
 
-    <!-- MODAL: CREATE SERVER -->
+    <!-- MODALS -->
     <div class="modal-overlay" id="modal-create-server">
         <div class="modal-box">
-            <div class="modal-title">Создать сервер</div>
-            <div class="modal-text">Ваш сервер — это место, где вы общаетесь с друзьями.</div>
-            <input type="text" id="new-server-name" class="input-field" placeholder="Название (например, Мой Сервер)" style="background:var(--zinc-800); border:none;">
-            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-                <button class="nexa-btn btn-secondary" onclick="Modals.closeAll()">Отмена</button>
-                <button class="nexa-btn btn-primary" onclick="App.createServer()">Создать</button>
+            <h2 style="margin-bottom:10px;">Создать сервер</h2>
+            <p style="color:var(--text-muted); margin-bottom:20px;">Ваш сервер будет местом общения.</p>
+            <input type="text" id="new-server-name" class="input-nexa" placeholder="Название сервера">
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="btn-3d" style="width:auto; background:var(--bg-surface); color:white; box-shadow:none;" onclick="Modals.closeAll()">Отмена</button>
+                <button class="btn-3d" style="width:auto;" onclick="App.createServer()">Создать</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: SETTINGS -->
     <div class="modal-overlay" id="modal-settings">
         <div class="modal-box">
-            <div class="modal-title">Профиль пользователя</div>
-            <div style="text-align:center; margin: 20px 0;">
+            <h2 style="margin-bottom:20px;">Мой Профиль</h2>
+            <div style="text-align:center; margin-bottom:20px;">
                 <img src="" id="settings-avatar" class="avatar-img" style="width:80px; height:80px;">
-                <h3 id="settings-name" style="margin-top:10px; color:white;"></h3>
             </div>
-            <label class="input-label">Отображаемое имя</label>
-            <input type="text" id="settings-username-input" class="input-field" style="background:var(--zinc-800); border:none;">
+            <label style="font-size:0.7rem; font-weight:700; text-transform:uppercase; color:var(--text-muted);">Отображаемое имя</label>
+            <input type="text" id="settings-username" class="input-nexa">
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-                <button class="nexa-btn btn-secondary" onclick="Modals.closeAll()">Закрыть</button>
-                <button class="nexa-btn btn-primary" onclick="App.saveProfile()">Сохранить</button>
+                <button class="btn-3d" style="width:auto; background:var(--bg-surface); color:white; box-shadow:none;" onclick="Modals.closeAll()">Готово</button>
+                <button class="btn-3d" style="width:auto;" onclick="App.saveProfile()">Сохранить</button>
             </div>
         </div>
-    </div>
-
-    <!-- CONTEXT MENU -->
-    <div id="ctx-menu">
-        <div class="ctx-item safe">Копировать ID</div>
-        <div class="ctx-item safe">Профиль</div>
-        <div class="ctx-item">Упомянуть</div>
-        <div class="ctx-item" style="border-top:1px solid var(--zinc-700); margin-top:4px; padding-top:8px;">Заблокировать</div>
     </div>
 
     <script>
         /**
-         * NEXA CORE ENGINE v2.0
-         * Pure Vanilla JS Architecture
+         * NEXA CORE ENGINE v3.0
+         * Full Client-Side Simulation
          */
 
         // --- STATE MANAGEMENT ---
         const Store = {
-            user: null, // { id, username, discriminator, avatar, status }
+            currentUser: null,
             servers: [
                 {
-                    id: 'srv_1', name: 'Nexa Official', icon: null,
+                    id: 'srv_nexa', name: 'Nexa Official', icon: null,
                     channels: [
-                        { id: 'ch_1', name: 'announcements', type: 'text', desc: 'Новости платформы' },
-                        { id: 'ch_2', name: 'general', type: 'text', desc: 'Общение на свободные темы' },
-                        { id: 'ch_3', name: 'dev-talk', type: 'text', desc: 'Только для разработчиков' }
+                        { id: 'ch_1', name: 'announcements', type: 'text', desc: 'Важные новости платформы' },
+                        { id: 'ch_2', name: 'general', type: 'text', desc: 'Общение на любые темы' },
+                        { id: 'ch_3', name: 'support', type: 'text', desc: 'Техническая поддержка' }
                     ],
+                    members: ['u_me', 'u_alice', 'u_bob'],
                     messages: {
-                        'ch_1': [{id:'m1', author:'System', content:'Добро пожаловать в Nexa v2.0.', ts:'Сегодня в 10:00', avatar:'https://api.dicebear.com/7.x/bottts/svg?seed=nexa'}],
-                        'ch_2': [{id:'m2', author:'Alice', content:'Кто-нибудь видел новый дизайн?', ts:'Сегодня в 10:05', avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka'}]
+                        'ch_1': [{id:'m1', authorId:'sys', content:'Добро пожаловать в Nexa v3.0.', ts:'Сегодня в 10:00'}],
+                        'ch_2': [{id:'m2', authorId:'u_alice', content:'Интерфейс выглядит просто потрясающе!', ts:'Сегодня в 10:05'}]
                     }
                 }
             ],
-            activeServerId: 'srv_1',
+            users: {
+                'u_me': { id: 'u_me', username: 'User', disc: '8821', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', status: 'online' },
+                'u_alice': { id: 'u_alice', username: 'Alice', disc: '1024', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka', status: 'dnd' },
+                'u_bob': { id: 'u_bob', username: 'Bob', disc: '4400', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob', status: 'idle' },
+                'sys': { id: 'sys', username: 'System', disc: '0000', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nexa', status: 'online' }
+            },
+            activeServerId: 'srv_nexa',
             activeChannelId: 'ch_2'
         };
 
@@ -570,63 +418,60 @@
 
         // --- ROUTER ---
         const Router = {
-            go: (viewName) => {
-                document.querySelectorAll('#view-container > section').forEach(el => el.classList.add('hidden'));
-                const target = document.getElementById(viewName === 'app' ? 'app-view' : viewName + '-view');
-                if(target) {
-                    target.classList.remove('hidden');
-                    target.classList.add('fade-enter');
-                    setTimeout(() => target.classList.remove('fade-enter'), 600);
+            go: (view) => {
+                Utils.el('#landing-view').classList.add('hidden');
+                Utils.el('#app-view').classList.add('hidden');
+                
+                if(view === 'app') {
+                    Utils.el('#app-view').classList.remove('hidden');
+                    App.init();
+                } else {
+                    Utils.el('#landing-view').classList.remove('hidden');
                 }
-                if(viewName === 'app') App.init();
             }
         };
 
         // --- AUTHENTICATION ---
         const Auth = {
-            login: (e) => {
-                e.preventDefault();
-                // Simulate API call
-                const btn = e.target.querySelector('button');
-                const originalText = btn.innerText;
-                btn.innerText = 'Загрузка...';
+            login: () => {
+                // Simulate API Delay
+                const btn = Utils.el('#form-login button');
+                btn.innerText = 'Вход...';
                 setTimeout(() => {
-                    Store.user = {
-                        id: 'u_me',
-                        username: 'DemoUser',
-                        discriminator: '8821',
-                        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
-                        status: 'online'
-                    };
+                    Store.currentUser = Store.users['u_me'];
                     Router.go('app');
-                }, 800);
+                }, 600);
             },
-            register: (e) => {
-                e.preventDefault();
-                const btn = e.target.querySelector('button');
-                btn.innerText = 'Создание аккаунта...';
-                setTimeout(() => {
-                    Store.user = {
-                        id: Utils.uuid(),
-                        username: 'User_' + Math.floor(Math.random()*1000), // Auto-generated
-                        discriminator: String(Math.floor(Math.random()*9000)+1000),
-                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Utils.uuid()}`,
-                        status: 'online'
-                    };
-                    Router.go('app');
-                }, 1000);
+            register: () => {
+                const email = Utils.el('#reg-email').value;
+                if(!email) return alert('Введите Email');
+                
+                const newId = 'u_' + Utils.uuid();
+                Store.currentUser = {
+                    id: newId,
+                    username: 'User_' + Math.floor(Math.random()*1000), // Auto-generated
+                    disc: String(Math.floor(Math.random()*9000)+1000),
+                    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Utils.uuid()}`,
+                    status: 'online'
+                };
+                Store.users[newId] = Store.currentUser;
+                
+                // Add user to default server
+                Store.servers[0].members.push(newId);
+                
+                Router.go('app');
             }
         };
 
-        // --- APPLICATION LOGIC ---
+        // --- APP LOGIC ---
         const App = {
             init: () => {
-                if(!Store.user) return;
+                if(!Store.currentUser) return;
                 
-                // Set User Data in UI
-                Utils.el('#my-username').innerText = Store.user.username;
-                Utils.el('#my-discriminator').innerText = Store.user.discriminator;
-                Utils.el('#my-avatar').src = Store.user.avatar;
+                // Update User UI
+                Utils.el('#my-username').innerText = Store.currentUser.username;
+                Utils.el('#my-discriminator').innerText = Store.currentUser.discriminator;
+                Utils.el('#my-avatar').src = Store.currentUser.avatar;
 
                 App.renderServers();
                 App.loadServer(Store.activeServerId);
@@ -645,8 +490,8 @@
                 container.innerHTML = '';
                 Store.servers.forEach(srv => {
                     const div = document.createElement('div');
-                    div.className = `nav-item ${Store.activeServerId === srv.id ? 'active' : ''}`;
-                    div.innerHTML = srv.name.substring(0,2).toUpperCase();
+                    div.className = `server-pill ${Store.activeServerId === srv.id ? 'active' : ''}`;
+                    div.innerText = srv.name.substring(0,2).toUpperCase();
                     div.onclick = () => App.loadServer(srv.id);
                     container.appendChild(div);
                 });
@@ -656,29 +501,29 @@
                 Store.activeServerId = id;
                 const srv = Store.servers.find(s => s.id === id);
                 
-                // Update Header
                 Utils.el('#current-server-name span').innerText = srv.name;
                 
                 // Render Channels
                 const chList = Utils.el('#channel-list');
-                chList.innerHTML = `<div class="channel-cat">▼ Текстовые каналы</div>`;
+                chList.innerHTML = `<div class="cat-name">▼ Текстовые каналы</div>`;
                 
                 srv.channels.filter(c => c.type === 'text').forEach(ch => {
                     const row = document.createElement('div');
-                    row.className = `channel-row ${Store.activeChannelId === ch.id ? 'active' : ''}`;
+                    row.className = `channel-item ${Store.activeChannelId === ch.id ? 'active' : ''}`;
                     row.innerHTML = `<span class="ch-icon">#</span> ${ch.name}`;
                     row.onclick = () => App.loadChannel(ch.id);
                     chList.appendChild(row);
                 });
 
-                // Load first channel if none active or invalid
+                // Load first channel if needed
                 if(!srv.channels.find(c => c.id === Store.activeChannelId)) {
                     App.loadChannel(srv.channels[0].id);
                 } else {
                     App.loadChannel(Store.activeChannelId);
                 }
                 
-                App.renderServers(); // Refresh active state
+                App.renderServers();
+                App.renderMembers();
             },
 
             loadChannel: (id) => {
@@ -689,7 +534,7 @@
                 Utils.el('#chat-title').innerText = ch.name;
                 Utils.el('#chat-desc').innerText = ch.desc || '';
                 
-                // Re-render channel list for active class
+                // Re-render sidebar for active state
                 App.loadServer(Store.activeServerId); 
 
                 // Render Messages
@@ -697,23 +542,25 @@
                 feed.innerHTML = '';
                 
                 const msgs = srv.messages[id] || [];
-                msgs.forEach(m => App.appendMessageToDOM(m));
+                msgs.forEach(m => App.appendMessage(m));
                 
                 feed.scrollTop = feed.scrollHeight;
             },
 
-            appendMessageToDOM: (msg) => {
+            appendMessage: (msg) => {
                 const feed = Utils.el('#message-feed');
+                const author = Store.users[msg.authorId] || { username: 'Unknown', avatar: '' };
+                
                 const div = document.createElement('div');
-                div.className = 'msg slide-up';
+                div.className = 'message-row fade-in';
                 div.innerHTML = `
-                    <img src="${msg.avatar}" class="msg-avatar" oncontextmenu="UI.showCtx(event)">
+                    <img src="${author.avatar}" class="msg-avatar">
                     <div class="msg-body">
-                        <div class="msg-head">
-                            <span class="msg-author" oncontextmenu="UI.showCtx(event)">${msg.author}</span>
-                            <span class="msg-ts">${msg.ts}</span>
+                        <div class="msg-header">
+                            <span class="msg-author">${author.username}</span>
+                            <span class="msg-date">${msg.ts}</span>
                         </div>
-                        <div class="msg-content">${msg.content}</div>
+                        <div class="msg-text">${msg.content}</div>
                     </div>
                 `;
                 feed.appendChild(div);
@@ -726,14 +573,13 @@
                 
                 const msgObj = {
                     id: Utils.uuid(),
-                    author: Store.user.username,
+                    authorId: Store.currentUser.id,
                     content: text,
-                    ts: Utils.time(),
-                    avatar: Store.user.avatar
+                    ts: Utils.time()
                 };
                 
                 srv.messages[Store.activeChannelId].push(msgObj);
-                App.appendMessageToDOM(msgObj);
+                App.appendMessage(msgObj);
             },
 
             createServer: () => {
@@ -742,6 +588,7 @@
                     id: Utils.uuid(),
                     name: name,
                     channels: [{id: Utils.uuid(), name:'general', type:'text', desc:''}],
+                    members: [Store.currentUser.id],
                     messages: {}
                 };
                 Store.servers.push(newSrv);
@@ -750,100 +597,75 @@
             },
 
             saveProfile: () => {
-                const newName = Utils.el('#settings-username-input').value;
+                const newName = Utils.el('#settings-username').value;
                 if(newName) {
-                    Store.user.username = newName;
+                    Store.currentUser.username = newName;
+                    Store.users[Store.currentUser.id].username = newName;
                     Utils.el('#my-username').innerText = newName;
                     Modals.closeAll();
+                    // Refresh messages to show new name
+                    App.loadChannel(Store.activeChannelId);
                 }
+            },
+
+            renderMembers: () => {
+                const list = Utils.el('#members-list');
+                list.innerHTML = '';
+                const srv = Store.servers.find(s => s.id === Store.activeServerId);
+                
+                let onlineCount = 0;
+
+                srv.members.forEach(uid => {
+                    const u = Store.users[uid];
+                    if(!u) return;
+                    if(u.status !== 'offline') onlineCount++;
+
+                    const div = document.createElement('div');
+                    div.className = 'member-item';
+                    div.innerHTML = `
+                        <div style="position:relative;">
+                            <img src="${u.avatar}" class="avatar-img" style="width:32px;height:32px;">
+                            <div class="status-dot" style="background:var(--status-${u.status}); width:10px; height:10px; border-width:2px;"></div>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">${u.username}</div>
+                            <div class="member-status">${u.status === 'online' ? 'В сети' : u.status}</div>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+                
+                Utils.el('#online-count').innerText = onlineCount;
             }
         };
 
-        // --- UI & MODALS ---
+        // --- UI HELPERS ---
         const Modals = {
-            openCreateServer: () => Utils.el('#modal-create-server').classList.add('open'),
+            openCreateServer: () => Utils.el('#modal-create-server').style.display = 'flex',
             openSettings: () => {
-                Utils.el('#settings-name').innerText = Store.user.username;
-                Utils.el('#settings-avatar').src = Store.user.avatar;
-                Utils.el('#settings-username-input').value = Store.user.username;
-                Utils.el('#modal-settings').classList.add('open');
+                Utils.el('#settings-username').value = Store.currentUser.username;
+                Utils.el('#settings-avatar').src = Store.currentUser.avatar;
+                Utils.el('#modal-settings').style.display = 'flex';
             },
-            closeAll: () => document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('open'))
+            closeAll: () => Utils.els('.modal-overlay').forEach(el => el.style.display = 'none')
         };
 
         const UI = {
-            showCtx: (e) => {
-                e.preventDefault();
-                const menu = Utils.el('#ctx-menu');
-                menu.style.display = 'block';
-                menu.style.left = e.pageX + 'px';
-                menu.style.top = e.pageY + 'px';
+            toggleAuth: (type) => {
+                if(type === 'register') {
+                    Utils.el('#form-login').classList.add('hidden');
+                    Utils.el('#form-register').classList.remove('hidden');
+                } else {
+                    Utils.el('#form-login').classList.remove('hidden');
+                    Utils.el('#form-register').classList.add('hidden');
+                }
             }
         };
 
-        // Global click to hide context menu
-        document.addEventListener('click', () => Utils.el('#ctx-menu').style.display = 'none');
-
-        // --- LANDING ANIMATION (CANVAS) ---
-        const initLandingAnim = () => {
-            const canvas = document.getElementById('canvas-bg');
-            const ctx = canvas.getContext('2d');
-            let w, h, particles = [];
-            
-            const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
-            window.addEventListener('resize', resize);
-            resize();
-
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * w;
-                    this.y = Math.random() * h;
-                    this.vx = (Math.random() - 0.5) * 0.5;
-                    this.vy = (Math.random() - 0.5) * 0.5;
-                    this.size = Math.random() * 2 + 1;
-                }
-                update() {
-                    this.x += this.vx; this.y += this.vy;
-                    if(this.x < 0 || this.x > w) this.vx *= -1;
-                    if(this.y < 0 || this.y > h) this.vy *= -1;
-                }
-                draw() {
-                    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-                    ctx.fill();
-                }
-            }
-
-            for(let i=0; i<60; i++) particles.push(new Particle());
-
-            const animate = () => {
-                ctx.clearRect(0, 0, w, h);
-                // Draw connections
-                ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-                ctx.lineWidth = 1;
-                for(let i=0; i<particles.length; i++) {
-                    particles[i].update();
-                    particles[i].draw();
-                    for(let j=i; j<particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
-                        const dist = Math.sqrt(dx*dx + dy*dy);
-                        if(dist < 150) {
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-                requestAnimationFrame(animate);
-            };
-            animate();
+        // Close modals on outside click
+        window.onclick = (e) => {
+            if(e.target.classList.contains('modal-overlay')) Modals.closeAll();
         };
-
-        // Start
-        initLandingAnim();
 
     </script>
 </body>
