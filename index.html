@@ -2,635 +2,849 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexa | Future Communication</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexa | The Future of Connection</title>
+    
+    <!-- Favicon Generation via Code -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%2318181b'/><path d='M30 35 L70 50 L30 65 Z' fill='white'/></svg>">
+
     <style>
+        /* 
+         * NEXA DESIGN SYSTEM 2026 
+         * Palette: Zinc / Monochrome / Neon White
+         */
+        
         :root {
-            --bg-dark: #0a0a0b;
-            --bg-panel: rgba(20, 20, 23, 0.7);
-            --bg-glass: rgba(255, 255, 255, 0.03);
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --accent-neon: #ffffff;
-            --accent-glow: rgba(255, 255, 255, 0.15);
-            --text-main: #ececec;
-            --text-muted: #949ba4;
-            --danger: #ff4d4d;
-            --success: #3fb950;
-            --font-main: 'Inter', sans-serif;
-            --font-code: 'JetBrains Mono', monospace;
-            --shadow-3d: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-            --neon-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            /* Colors - Zinc Scale */
+            --zinc-950: #09090b;
+            --zinc-900: #18181b;
+            --zinc-800: #27272a;
+            --zinc-700: #3f3f46;
+            --zinc-500: #71717a;
+            --zinc-400: #a1a1aa;
+            --zinc-100: #f4f4f5;
+            --white: #ffffff;
+            
+            /* Semantic Colors */
+            --bg-app: var(--zinc-950);
+            --bg-surface: rgba(24, 24, 27, 0.65);
+            --bg-surface-hover: rgba(39, 39, 42, 0.8);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-active: rgba(255, 255, 255, 0.15);
+            
+            /* Accents */
+            --accent-glow: 0 0 20px rgba(255, 255, 255, 0.15);
+            --text-primary: var(--zinc-100);
+            --text-secondary: var(--zinc-400);
+            
+            /* Statuses */
+            --status-online: #22c55e;
+            --status-idle: #eab308;
+            --status-dnd: #ef4444;
+            --status-offline: var(--zinc-500);
+
+            /* Typography */
+            --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* Animation Curves */
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: var(--font-main);
+            background-color: var(--bg-app);
+            color: var(--text-primary);
+            font-family: var(--font-display);
             height: 100vh;
             overflow: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(50, 50, 50, 0.2) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(30, 30, 30, 0.2) 0%, transparent 40%);
+            font-smooth: always;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        /* --- UTILS & ANIMATIONS --- */
+        .hidden { display: none !important; }
+        .fade-enter { animation: fadeIn 0.6s var(--ease-out-expo) forwards; }
+        .slide-up { animation: slideUp 0.5s var(--ease-out-expo) forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(2); opacity: 0; } }
+
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+        ::-webkit-scrollbar-thumb { background: var(--zinc-700); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--zinc-500); }
 
-        /* App Layout */
-        #app {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
+        /* --- ROUTER VIEWS --- */
+        #view-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* --- LANDING PAGE --- */
+        #landing-view {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 1;
+        }
+        
+        #canvas-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; filter: blur(60px); opacity: 0.4;
+        }
+
+        .landing-content {
+            text-align: center; z-index: 2;
             backdrop-filter: blur(10px);
+            padding: 60px;
+            border-radius: 24px;
+            border: 1px solid var(--border-subtle);
+            background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%);
+            max-width: 600px;
         }
 
-        /* Auth Screen */
-        #auth-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark); z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-            flex-direction: column;
-        }
-        
-        .glass-card {
-            background: var(--bg-panel);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 16px;
-            padding: 40px;
-            width: 400px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-
-        .logo-text {
-            font-size: 3rem; font-weight: 700; letter-spacing: -2px;
-            background: linear-gradient(to right, #fff, #888);
+        .brand-logo-lg {
+            font-size: 4rem; font-weight: 800; letter-spacing: -0.05em;
+            background: linear-gradient(180deg, #fff 0%, #71717a 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            text-shadow: 0 0 30px rgba(255,255,255,0.3);
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 30px rgba(255,255,255,0.2));
         }
 
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 8px; }
-        .nexa-input {
-            width: 100%; padding: 12px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--border-glass);
-            border-radius: 8px; color: white;
-            transition: 0.3s;
-        }
-        .nexa-input:focus { border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
-
-        .btn-3d {
-            background: white; color: black;
-            border: none; padding: 12px 24px;
-            border-radius: 8px; font-weight: 600; cursor: pointer;
-            box-shadow: 0 4px 0 #ccc, 0 5px 10px rgba(0,0,0,0.3);
-            transition: all 0.1s; width: 100%;
-        }
-        .btn-3d:active { transform: translateY(4px); box-shadow: 0 0 0 #ccc, inset 0 2px 5px rgba(0,0,0,0.2); }
-
-        /* Main Interface */
-        .sidebar-servers {
-            width: 72px; background: rgba(0,0,0,0.4);
-            display: flex; flex-direction: column; align-items: center;
-            padding: 12px 0; border-right: 1px solid var(--border-glass);
-            z-index: 10;
+        .tagline {
+            font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 3rem;
+            font-weight: 300; letter-spacing: 0.05em;
         }
 
-        .server-icon {
-            width: 48px; height: 48px;
-            background: var(--bg-glass);
-            border-radius: 50%;
-            margin-bottom: 12px;
+        .btn-group { display: flex; gap: 16px; justify-content: center; }
+
+        .nexa-btn {
+            padding: 14px 32px; border-radius: 12px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s var(--ease-spring); font-size: 1rem; border: none;
+            position: relative; overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--white); color: var(--zinc-950);
+            box-shadow: 0 10px 30px -10px rgba(255,255,255,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 40px -10px rgba(255,255,255,0.5); }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.05); color: var(--white);
+            border: 1px solid var(--border-subtle);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--white); }
+
+        /* --- AUTH PAGES --- */
+        .auth-wrapper {
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            border: 1px solid transparent;
+            height: 100vh; background: var(--bg-app);
         }
-        .server-icon:hover {
-            border-radius: 16px; background: white; color: black;
-            box-shadow: 0 0 20px rgba(255,255,255,0.4);
-        }
-        .server-icon.active { border-radius: 16px; background: white; color: black; }
-        .server-icon img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
         
-        .separator { width: 32px; height: 2px; background: var(--border-glass); margin: 8px 0; }
+        .auth-card {
+            width: 420px; padding: 40px;
+            background: var(--zinc-900);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
 
+        .auth-header h2 { font-size: 1.5rem; margin-bottom: 8px; color: var(--white); }
+        .auth-header p { color: var(--text-secondary); margin-bottom: 24px; font-size: 0.9rem; }
+
+        .input-field {
+            width: 100%; background: var(--zinc-950); border: 1px solid var(--zinc-800);
+            padding: 12px 16px; border-radius: 8px; color: white; margin-bottom: 16px;
+            transition: 0.2s; font-family: var(--font-display);
+        }
+        .input-field:focus { border-color: var(--zinc-500); box-shadow: 0 0 0 2px rgba(113, 113, 122, 0.2); }
+        .input-label { display: block; color: var(--zinc-400); font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
+
+        /* --- MAIN APP INTERFACE --- */
+        #app-view { display: grid; grid-template-columns: 72px 240px 1fr 240px; height: 100vh; }
+
+        /* 1. Server Rail */
+        .rail-servers {
+            background: var(--zinc-950); display: flex; flex-direction: column; align-items: center;
+            padding: 12px 0; gap: 8px; border-right: 1px solid var(--border-subtle);
+        }
+
+        .nav-item {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--zinc-900); color: var(--text-primary);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s var(--ease-spring);
+            position: relative; overflow: hidden;
+        }
+        .nav-item:hover { border-radius: 16px; background: var(--white); color: black; }
+        .nav-item.active { border-radius: 16px; background: var(--white); color: black; }
+        .nav-item.active::before {
+            content: ''; position: absolute; left: -16px; top: 50%; transform: translateY(-50%);
+            width: 8px; height: 32px; background: white; border-radius: 0 4px 4px 0;
+        }
+        .nav-icon { width: 24px; height: 24px; fill: currentColor; }
+        .nav-sep { width: 32px; height: 2px; background: var(--zinc-800); margin: 4px 0; border-radius: 1px; }
+
+        /* 2. Sidebar Channels */
         .sidebar-channels {
-            width: 240px; background: rgba(15, 15, 18, 0.6);
-            display: flex; flex-direction: column;
-            border-right: 1px solid var(--border-glass);
+            background: var(--zinc-900); display: flex; flex-direction: column;
+            border-right: 1px solid var(--border-subtle);
         }
 
-        .channel-header {
-            height: 50px; padding: 0 16px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border-glass);
-            font-weight: 600; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        .server-header {
+            height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
+            font-weight: 600; font-size: 0.95rem; border-bottom: 1px solid var(--border-subtle);
+            cursor: pointer; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
+        .server-header:hover { background: var(--bg-surface-hover); }
 
-        .channel-list { flex: 1; padding: 10px 8px; overflow-y: auto; }
+        .channels-scroll { flex: 1; overflow-y: auto; padding: 16px 8px; }
         
-        .category-name {
-            font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;
-            font-weight: 700; margin: 16px 8px 4px 8px; display: flex; align-items: center;
+        .channel-cat {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--zinc-500);
+            margin: 16px 8px 4px 8px; display: flex; align-items: center;
+            cursor: pointer;
         }
-        .category-name:hover { color: white; }
+        .channel-cat:hover { color: var(--text-primary); }
+        
+        .channel-row {
+            padding: 6px 8px; margin: 1px 0; border-radius: 4px;
+            color: var(--zinc-400); cursor: pointer; display: flex; align-items: center;
+            font-weight: 500; font-size: 0.95rem;
+        }
+        .channel-row:hover { background: var(--bg-surface-hover); color: var(--text-primary); }
+        .channel-row.active { background: rgba(255,255,255,0.08); color: var(--white); }
+        .ch-icon { margin-right: 6px; opacity: 0.6; font-size: 1.1rem; }
 
-        .channel-item {
-            padding: 6px 8px; margin-bottom: 2px; border-radius: 4px;
-            color: var(--text-muted); cursor: pointer; display: flex; align-items: center;
-            transition: 0.2s;
+        .user-panel {
+            height: 64px; background: rgba(0,0,0,0.2); padding: 0 12px;
+            display: flex; align-items: center; gap: 12px;
+            border-top: 1px solid var(--border-subtle);
         }
-        .channel-item:hover { background: var(--bg-glass); color: white; }
-        .channel-item.active { background: rgba(255,255,255,0.1); color: white; }
-        .channel-hash { margin-right: 6px; opacity: 0.5; }
-
-        .user-panel-mini {
-            height: 60px; background: rgba(0,0,0,0.3);
-            display: flex; align-items: center; padding: 0 10px;
-            border-top: 1px solid var(--border-glass);
-        }
-        .avatar-wrapper { position: relative; margin-right: 10px; }
-        .avatar { width: 36px; height: 36px; border-radius: 50%; background: #333; object-fit: cover;}
-        .status-dot {
+        .avatar-wrap { position: relative; cursor: pointer; }
+        .avatar-img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--zinc-800); }
+        .status-indicator {
             position: absolute; bottom: -2px; right: -2px;
-            width: 12px; height: 12px; border-radius: 50%;
-            border: 2px solid #111;
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 3px solid var(--zinc-900);
         }
-        .status-online { background: var(--success); }
-        .status-idle { background: #faa61a; }
-        .status-dnd { background: var(--danger); }
+        .st-online { background: var(--status-online); }
+        .st-dnd { background: var(--status-dnd); }
+        
+        .user-info { flex: 1; overflow: hidden; }
+        .user-name { font-size: 0.9rem; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-tag { font-size: 0.75rem; color: var(--text-secondary); }
 
+        /* 3. Chat Area */
         .chat-area {
-            flex: 1; background: rgba(20, 20, 23, 0.4);
-            display: flex; flex-direction: column;
+            background: var(--bg-app); display: flex; flex-direction: column;
             position: relative;
         }
 
-        .chat-header {
-            height: 50px; padding: 0 20px;
-            display: flex; align-items: center;
-            border-bottom: 1px solid var(--border-glass);
-            background: rgba(10, 10, 11, 0.5);
-            backdrop-filter: blur(5px);
+        .top-bar {
+            height: 56px; padding: 0 24px; display: flex; align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .header-hash { font-size: 1.5rem; color: var(--text-muted); margin-right: 10px; }
-        .header-title { font-weight: 700; color: white; margin-right: 15px; }
-        .header-desc { font-size: 0.85rem; color: var(--text-muted); border-left: 1px solid var(--border-glass); padding-left: 15px; }
+        .hashtag { color: var(--zinc-500); font-size: 1.5rem; margin-right: 12px; }
+        .ch-title { font-weight: 700; color: white; margin-right: 16px; }
+        .ch-desc { color: var(--text-secondary); font-size: 0.85rem; border-left: 1px solid var(--zinc-700); padding-left: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;}
 
-        .messages-wrapper {
-            flex: 1; overflow-y: auto; padding: 20px;
-            display: flex; flex-direction: column; gap: 15px;
+        .messages-list {
+            flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 4px;
         }
 
-        .message {
-            display: flex; margin-top: 5px; animation: fadeIn 0.3s ease;
+        .msg {
+            display: flex; margin-top: 16px; padding: 2px 0;
+            transition: background 0.1s;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .msg:hover { background: rgba(255,255,255,0.02); }
+        .msg-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 16px; cursor: pointer; transition: 0.2s; }
+        .msg-avatar:hover { opacity: 0.8; }
         
-        .msg-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; margin-top: 2px; cursor: pointer; }
-        .msg-content { flex: 1; }
-        .msg-header { display: flex; align-items: baseline; margin-bottom: 4px; }
+        .msg-body { flex: 1; min-width: 0; }
+        .msg-head { display: flex; align-items: baseline; margin-bottom: 4px; }
         .msg-author { font-weight: 600; color: white; margin-right: 8px; cursor: pointer; }
         .msg-author:hover { text-decoration: underline; }
-        .msg-time { font-size: 0.7rem; color: var(--text-muted); }
-        .msg-text { color: #dcddde; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
-        
-        .input-area {
-            padding: 0 20px 20px 20px;
+        .msg-ts { font-size: 0.7rem; color: var(--zinc-500); }
+        .msg-content { color: #dcddde; line-height: 1.45; font-size: 0.95rem; word-break: break-word; }
+
+        .input-wrapper { padding: 0 24px 24px 24px; }
+        .chat-input-box {
+            background: var(--zinc-800); border-radius: 8px; padding: 12px 16px;
+            display: flex; align-items: center; min-height: 48px;
         }
-        .input-box {
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px; padding: 12px 16px;
-            display: flex; align-items: center;
-            border: 1px solid transparent; transition: 0.2s;
-        }
-        .input-box:focus-within { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); }
         .chat-input {
             flex: 1; background: transparent; border: none; color: white; font-size: 1rem;
+            font-family: var(--font-display);
         }
-        .attach-btn { color: var(--text-muted); cursor: pointer; margin-right: 15px; font-size: 1.2rem; }
-        .attach-btn:hover { color: white; }
+        .input-actions { display: flex; gap: 12px; color: var(--zinc-400); }
+        .input-icon { cursor: pointer; transition: 0.2s; }
+        .input-icon:hover { color: var(--text-primary); }
 
+        /* 4. Members List */
         .members-sidebar {
-            width: 240px; background: rgba(10, 10, 11, 0.6);
-            border-left: 1px solid var(--border-glass);
-            padding: 20px 10px; overflow-y: auto;
-            display: none; /* Hidden on small screens */
+            background: var(--zinc-900); border-left: 1px solid var(--border-subtle);
+            padding: 24px 16px; overflow-y: auto;
         }
-        @media(min-width: 1000px) { .members-sidebar { display: block; } }
-
-        .role-group { margin-bottom: 20px; }
-        .role-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; text-transform: uppercase; }
-        .member-item {
-            display: flex; align-items: center; padding: 6px 8px;
-            border-radius: 4px; cursor: pointer; opacity: 0.9;
+        .role-header {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            color: var(--zinc-500); margin-bottom: 12px;
         }
-        .member-item:hover { background: var(--bg-glass); opacity: 1; }
-        .member-name { font-weight: 500; color: #fff; margin-left: 10px; }
-        .member-status { font-size: 0.75rem; color: var(--text-muted); display: block; }
+        .member-card {
+            display: flex; align-items: center; padding: 6px 8px; border-radius: 4px;
+            cursor: pointer; opacity: 0.9; margin-bottom: 2px;
+        }
+        .member-card:hover { background: var(--bg-surface-hover); opacity: 1; }
+        .member-avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 12px; position: relative;}
+        .member-name { font-weight: 500; color: var(--zinc-300); font-size: 0.9rem; }
+        .member-card:hover .member-name { color: white; }
+        .member-activity { font-size: 0.7rem; color: var(--text-secondary); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
 
-        /* Modal */
+        /* --- MODALS --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            z-index: 1000; display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            z-index: 1000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.3s;
         }
-        .modal {
-            background: #18191c; border: 1px solid var(--border-glass);
-            width: 440px; border-radius: 12px; padding: 24px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal h2 { margin-bottom: 10px; color: white; }
-        .modal p { color: var(--text-muted); margin-bottom: 20px; }
-
-        /* Utility classes */
-        .hidden { display: none !important; }
-        .flex-center { display: flex; align-items: center; justify-content: center; }
-        .icon-plus::before { content: '+'; font-size: 20px; }
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
         
-        /* Neon Button Effect */
-        .btn-neon {
-            background: transparent; border: 1px solid white; color: white;
-            padding: 8px 16px; border-radius: 4px; cursor: pointer;
-            transition: 0.3s; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+        .modal-box {
+            background: var(--zinc-900); width: 440px; border-radius: 12px;
+            padding: 24px; transform: scale(0.95); transition: 0.3s var(--ease-spring);
+            border: 1px solid var(--border-subtle); box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
-        .btn-neon:hover { background: white; color: black; box-shadow: 0 0 20px white; }
+        .modal-overlay.open .modal-box { transform: scale(1); }
+        
+        .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; text-align: center; }
+        .modal-text { color: var(--text-secondary); text-align: center; margin-bottom: 24px; font-size: 0.9rem; }
 
+        /* Context Menu */
+        #ctx-menu {
+            position: fixed; background: var(--zinc-800); border: 1px solid var(--border-subtle);
+            border-radius: 6px; padding: 6px; width: 180px; z-index: 2000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none;
+        }
+        .ctx-item {
+            padding: 8px 10px; font-size: 0.85rem; color: var(--zinc-300); cursor: pointer; border-radius: 4px;
+        }
+        .ctx-item:hover { background: var(--danger); color: white; }
+        .ctx-item.safe:hover { background: var(--zinc-700); color: white; }
+
+        /* Responsive Fixes */
+        @media (max-width: 1000px) {
+            #app-view { grid-template-columns: 72px 0 1fr 0; }
+            .members-sidebar { display: none; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Auth Screen -->
-    <div id="auth-screen">
-        <div class="logo-text">NEXA</div>
-        <p style="color:var(--text-muted); margin-bottom: 30px;">NEXT GEN COMMUNICATION PLATFORM</p>
+    <!-- BACKGROUND CANVAS FOR LANDING -->
+    <canvas id="canvas-bg"></canvas>
+
+    <!-- VIEW CONTAINER -->
+    <div id="view-container">
         
-        <div class="glass-card" id="login-form">
-            <h2 style="margin-bottom: 20px;">Вход в систему</h2>
-            <div class="input-group">
-                <label>Email или Никнейм</label>
-                <input type="text" class="nexa-input" placeholder="user@nexa.app" value="demo_user">
+        <!-- 1. LANDING VIEW -->
+        <section id="landing-view" class="fade-enter">
+            <div class="landing-content slide-up">
+                <div class="brand-logo-lg">NEXA</div>
+                <p class="tagline">ARCHITECTURE OF SILENCE. SPEED OF THOUGHT.</p>
+                <div class="btn-group">
+                    <button class="nexa-btn btn-primary" onclick="Router.go('register')">Начать общение</button>
+                    <button class="nexa-btn btn-secondary" onclick="Router.go('login')">Войти</button>
+                </div>
             </div>
-            <div class="input-group">
-                <label>Пароль</label>
-                <input type="password" class="nexa-input" placeholder="••••••••" value="password">
-            </div>
-            <button class="btn-3d" onclick="App.login()">ВОЙТИ</button>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: var(--text-muted);">
-                Нет аккаунта? <span style="color: white; cursor: pointer;" onclick="alert('Регистрация симулирована')">Создать</span>
-            </p>
-        </div>
-    </div>
+        </section>
 
-    <!-- Main Application -->
-    <div id="app" class="hidden">
-        
-        <!-- Server Sidebar -->
-        <nav class="sidebar-servers">
-            <div class="server-icon active" onclick="App.switchServer('home')" title="Личные сообщения">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+        <!-- 2. LOGIN VIEW -->
+        <section id="login-view" class="hidden auth-wrapper">
+            <div class="auth-card slide-up">
+                <div class="auth-header">
+                    <h2>С возвращением</h2>
+                    <p>Мы так рады видеть вас снова!</p>
+                </div>
+                <form onsubmit="Auth.login(event)">
+                    <label class="input-label">Email или номер телефона</label>
+                    <input type="text" class="input-field" required>
+                    <label class="input-label">Пароль</label>
+                    <input type="password" class="input-field" required>
+                    <button type="submit" class="nexa-btn btn-primary" style="width:100%; margin-top:10px;">Войти</button>
+                </form>
+                <div style="margin-top:12px; font-size:0.8rem; color:var(--zinc-500);">
+                    Нужен аккаунт? <span style="color:var(--white); cursor:pointer;" onclick="Router.go('register')">Регистрация</span>
+                </div>
             </div>
-            <div class="separator"></div>
+        </section>
+
+        <!-- 3. REGISTER VIEW -->
+        <section id="register-view" class="hidden auth-wrapper">
+            <div class="auth-card slide-up">
+                <div class="auth-header">
+                    <h2>Создать аккаунт</h2>
+                    <p>Присоединяйтесь к будущему коммуникаций.</p>
+                </div>
+                <form onsubmit="Auth.register(event)">
+                    <label class="input-label">Email</label>
+                    <input type="email" class="input-field" required>
+                    <label class="input-label">Пароль</label>
+                    <input type="password" class="input-field" required>
+                    <!-- NO USERNAME FIELD as requested -->
+                    <button type="submit" class="nexa-btn btn-primary" style="width:100%; margin-top:10px;">Продолжить</button>
+                </form>
+                <div style="margin-top:12px; font-size:0.8rem; color:var(--zinc-500);">
+                    Уже есть аккаунт? <span style="color:var(--white); cursor:pointer;" onclick="Router.go('login')">Войти</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. MAIN APP VIEW -->
+        <section id="app-view" class="hidden">
             
-            <!-- Dynamic Servers will be injected here -->
-            <div id="server-list-container"></div>
-
-            <div class="server-icon" onclick="App.openCreateServerModal()" title="Создать сервер">
-                <span class="icon-plus" style="color: var(--success);"></span>
-            </div>
-        </nav>
-
-        <!-- Channel Sidebar -->
-        <aside class="sidebar-channels">
-            <div class="channel-header">
-                <span id="current-server-name">Главная</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            
-            <div class="channel-list" id="channel-list-container">
-                <!-- Channels injected via JS -->
-            </div>
-
-            <div class="user-panel-mini">
-                <div class="avatar-wrapper">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="avatar" id="my-avatar">
-                    <div class="status-dot status-online"></div>
+            <!-- Server Rail -->
+            <nav class="rail-servers">
+                <div class="nav-item active" onclick="App.navHome()" title="Личные сообщения">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
                 </div>
-                <div style="flex:1;">
-                    <div style="font-weight:600; font-size:0.9rem;" id="my-username">User</div>
-                    <div style="font-size:0.75rem; color:var(--text-muted);">#Online</div>
+                <div class="nav-sep"></div>
+                <div id="server-list-rail"></div>
+                <div class="nav-item" onclick="Modals.openCreateServer()" style="color: var(--status-online);">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
                 </div>
-                <div style="display:flex; gap:10px; color:white;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </nav>
+
+            <!-- Channel Sidebar -->
+            <aside class="sidebar-channels">
+                <div class="server-header" id="current-server-name">
+                    <span>Nexa Community</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
-            </div>
-        </aside>
-
-        <!-- Chat Area -->
-        <main class="chat-area">
-            <header class="chat-header">
-                <span class="header-hash">#</span>
-                <span class="header-title" id="chat-title">general</span>
-                <span class="header-desc" id="chat-desc">Общий чат для всех участников</span>
-            </header>
-
-            <div class="messages-wrapper" id="messages-container">
-                <!-- Messages go here -->
-            </div>
-
-            <div class="input-area">
-                <div class="input-box">
-                    <span class="attach-btn">+</span>
-                    <input type="text" class="chat-input" id="message-input" placeholder="Написать сообщение..." autocomplete="off">
-                    <div style="display:flex; gap:15px; color:var(--text-muted);">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                <div class="channels-scroll" id="channel-list">
+                    <!-- Injected via JS -->
+                </div>
+                
+                <div class="user-panel">
+                    <div class="avatar-wrap" onclick="Modals.openSettings()">
+                        <img src="" id="my-avatar" class="avatar-img">
+                        <div class="status-indicator st-online"></div>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name" id="my-username">User</div>
+                        <div class="user-tag">#<span id="my-discriminator">0000</span></div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer; color:var(--text-secondary)"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
                     </div>
                 </div>
-            </div>
-        </main>
+            </aside>
 
-        <!-- Members Sidebar -->
-        <aside class="members-sidebar">
-            <div class="role-group">
-                <div class="role-title">Администраторы — 1</div>
-                <div class="member-item">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=NexaBot" class="avatar" style="width:32px;height:32px;">
-                    <div class="member-name" style="color:#ff4d4d;">Nexa System</div>
-                    <span class="member-status">Играет в Code</span>
+            <!-- Main Chat -->
+            <main class="chat-area">
+                <header class="top-bar">
+                    <span class="hashtag">#</span>
+                    <span class="ch-title" id="chat-title">general</span>
+                    <span class="ch-desc" id="chat-desc">Общий чат</span>
+                </header>
+                
+                <div class="messages-list" id="message-feed">
+                    <!-- Messages injected here -->
                 </div>
-            </div>
-            <div class="role-group">
-                <div class="role-title">Онлайн — 3</div>
-                <div class="member-item">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="avatar" style="width:32px;height:32px;">
-                    <div class="member-name">Вы</div>
+
+                <div class="input-wrapper">
+                    <div class="chat-input-box">
+                        <div class="input-actions" style="margin-right:12px; font-size:1.5rem; cursor:pointer;">+</div>
+                        <input type="text" class="chat-input" id="msg-input" placeholder="Написать сообщение..." autocomplete="off">
+                        <div class="input-actions">
+                            <svg class="input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                            <svg class="input-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>
+                        </div>
+                    </div>
                 </div>
-                <div class="member-item">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" class="avatar" style="width:32px;height:32px;">
-                    <div class="member-name">Alice</div>
+            </main>
+
+            <!-- Members -->
+            <aside class="members-sidebar">
+                <div class="role-header">Online — 3</div>
+                <div class="member-card">
+                    <div class="member-avatar">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="avatar-img">
+                        <div class="status-indicator st-online" style="width:10px; height:10px; border-width:2px;"></div>
+                    </div>
+                    <div>
+                        <div class="member-name" style="color:#fff;">Вы</div>
+                        <span class="member-activity">VS Code</span>
+                    </div>
                 </div>
-            </div>
-        </aside>
+                <div class="member-card">
+                    <div class="member-avatar">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" class="avatar-img">
+                        <div class="status-indicator st-dnd" style="width:10px; height:10px; border-width:2px;"></div>
+                    </div>
+                    <div>
+                        <div class="member-name">Alice</div>
+                        <span class="member-activity">Spotify</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
     </div>
 
-    <!-- Create Server Modal -->
-    <div class="modal-overlay" id="create-server-modal">
-        <div class="modal">
-            <h2>Создать сервер</h2>
-            <p>Ваш сервер будет местом, где вы общаетесь с друзьями. Настройте его под себя.</p>
-            <div class="input-group">
-                <label>Название сервера</label>
-                <input type="text" class="nexa-input" id="new-server-name" placeholder="Мой крутой сервер">
-            </div>
-            <div style="display:flex; gap:10px; justify-content: flex-end; margin-top:20px;">
-                <button class="btn-neon" style="border:none; color:var(--text-muted);" onclick="document.getElementById('create-server-modal').style.display='none'">Отмена</button>
-                <button class="btn-3d" style="width:auto;" onclick="App.createServer()">Создать</button>
+    <!-- MODAL: CREATE SERVER -->
+    <div class="modal-overlay" id="modal-create-server">
+        <div class="modal-box">
+            <div class="modal-title">Создать сервер</div>
+            <div class="modal-text">Ваш сервер — это место, где вы общаетесь с друзьями.</div>
+            <input type="text" id="new-server-name" class="input-field" placeholder="Название (например, Мой Сервер)" style="background:var(--zinc-800); border:none;">
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                <button class="nexa-btn btn-secondary" onclick="Modals.closeAll()">Отмена</button>
+                <button class="nexa-btn btn-primary" onclick="App.createServer()">Создать</button>
             </div>
         </div>
+    </div>
+
+    <!-- MODAL: SETTINGS -->
+    <div class="modal-overlay" id="modal-settings">
+        <div class="modal-box">
+            <div class="modal-title">Профиль пользователя</div>
+            <div style="text-align:center; margin: 20px 0;">
+                <img src="" id="settings-avatar" class="avatar-img" style="width:80px; height:80px;">
+                <h3 id="settings-name" style="margin-top:10px; color:white;"></h3>
+            </div>
+            <label class="input-label">Отображаемое имя</label>
+            <input type="text" id="settings-username-input" class="input-field" style="background:var(--zinc-800); border:none;">
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                <button class="nexa-btn btn-secondary" onclick="Modals.closeAll()">Закрыть</button>
+                <button class="nexa-btn btn-primary" onclick="App.saveProfile()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTEXT MENU -->
+    <div id="ctx-menu">
+        <div class="ctx-item safe">Копировать ID</div>
+        <div class="ctx-item safe">Профиль</div>
+        <div class="ctx-item">Упомянуть</div>
+        <div class="ctx-item" style="border-top:1px solid var(--zinc-700); margin-top:4px; padding-top:8px;">Заблокировать</div>
     </div>
 
     <script>
-        // --- NEXA CORE ENGINE --- //
-        
-        const Utils = {
-            generateId: () => Math.random().toString(36).substr(2, 9),
-            getTime: () => {
-                const now = new Date();
-                return `Сегодня в ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-            },
-            randomItem: (arr) => arr[Math.floor(Math.random() * arr.length)]
-        };
+        /**
+         * NEXA CORE ENGINE v2.0
+         * Pure Vanilla JS Architecture
+         */
 
+        // --- STATE MANAGEMENT ---
         const Store = {
-            currentUser: {
-                id: 'u_me', username: 'DemoUser', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', status: 'online'
-            },
+            user: null, // { id, username, discriminator, avatar, status }
             servers: [
                 {
-                    id: 's_1', name: 'Cyber Lounge', icon: null, 
+                    id: 'srv_1', name: 'Nexa Official', icon: null,
                     channels: [
-                        { id: 'c_1', name: 'general', type: 'text', desc: 'Общение обо всем' },
-                        { id: 'c_2', name: 'memes', type: 'text', desc: 'Только мемы' },
-                        { id: 'c_3', name: 'music', type: 'voice', desc: '' }
+                        { id: 'ch_1', name: 'announcements', type: 'text', desc: 'Новости платформы' },
+                        { id: 'ch_2', name: 'general', type: 'text', desc: 'Общение на свободные темы' },
+                        { id: 'ch_3', name: 'dev-talk', type: 'text', desc: 'Только для разработчиков' }
                     ],
                     messages: {
-                        'c_1': [
-                            { id: 'm_1', author: 'System', text: 'Добро пожаловать в Cyber Lounge!', time: '10:00', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=1' },
-                            { id: 'm_2', author: 'Alice', text: 'Привет всем! Как дизайн?', time: '10:05', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka' }
-                        ]
-                    }
-                },
-                {
-                    id: 's_2', name: 'Dev Team', icon: null,
-                    channels: [
-                        { id: 'c_4', name: 'announcements', type: 'text', desc: 'Важные новости' },
-                        { id: 'c_5', name: 'coding', type: 'text', desc: 'Обсуждение кода' }
-                    ],
-                    messages: {
-                        'c_4': [{ id: 'm_3', author: 'Boss', text: 'Релиз Nexa переносится на пятницу.', time: '09:00', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bob' }]
+                        'ch_1': [{id:'m1', author:'System', content:'Добро пожаловать в Nexa v2.0.', ts:'Сегодня в 10:00', avatar:'https://api.dicebear.com/7.x/bottts/svg?seed=nexa'}],
+                        'ch_2': [{id:'m2', author:'Alice', content:'Кто-нибудь видел новый дизайн?', ts:'Сегодня в 10:05', avatar:'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka'}]
                     }
                 }
             ],
-            activeServerId: 's_1',
-            activeChannelId: 'c_1'
+            activeServerId: 'srv_1',
+            activeChannelId: 'ch_2'
         };
 
-        const App = {
-            init: () => {
-                App.renderServers();
-                App.renderChannels();
-                App.renderMessages();
-                
-                // Event Listeners
-                document.getElementById('message-input').addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') App.sendMessage(this.value);
-                });
-            },
+        // --- UTILS ---
+        const Utils = {
+            uuid: () => Math.random().toString(36).substr(2, 9),
+            time: () => `Сегодня в ${new Date().getHours()}:${String(new Date().getMinutes()).padStart(2,'0')}`,
+            el: (sel) => document.querySelector(sel),
+            els: (sel) => document.querySelectorAll(sel)
+        };
 
-            login: () => {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
-                App.init();
-            },
-
-            renderServers: () => {
-                const container = document.getElementById('server-list-container');
-                container.innerHTML = '';
-                Store.servers.forEach(server => {
-                    const el = document.createElement('div');
-                    el.className = `server-icon ${Store.activeServerId === server.id ? 'active' : ''}`;
-                    // Placeholder icons based on name hash
-                    const hue = server.name.length * 20;
-                    el.style.backgroundColor = server.id === Store.activeServerId ? 'white' : `hsl(${hue}, 60%, 40%)`;
-                    
-                    el.onclick = () => App.switchServer(server.id);
-                    el.innerHTML = `<span style="color:${server.id === Store.activeServerId ? 'black' : 'white'}; font-weight:bold;">${server.name.substring(0,2).toUpperCase()}</span>`;
-                    container.appendChild(el);
-                });
-            },
-
-            switchServer: (serverId) => {
-                Store.activeServerId = serverId;
-                if(serverId === 'home') {
-                    document.getElementById('current-server-name').innerText = "Личные сообщения";
-                    document.getElementById('channel-list-container').innerHTML = '<div style="padding:10px; color:#666;">Нет активных чатов</div>';
-                    document.getElementById('messages-container').innerHTML = '';
-                    return;
+        // --- ROUTER ---
+        const Router = {
+            go: (viewName) => {
+                document.querySelectorAll('#view-container > section').forEach(el => el.classList.add('hidden'));
+                const target = document.getElementById(viewName === 'app' ? 'app-view' : viewName + '-view');
+                if(target) {
+                    target.classList.remove('hidden');
+                    target.classList.add('fade-enter');
+                    setTimeout(() => target.classList.remove('fade-enter'), 600);
                 }
-
-                const server = Store.servers.find(s => s.id === serverId);
-                document.getElementById('current-server-name').innerText = server.name;
-                
-                // Set first channel as active
-                if (server.channels.length > 0) {
-                    Store.activeChannelId = server.channels[0].id;
-                }
-
-                App.renderServers();
-                App.renderChannels();
-                App.renderMessages();
-            },
-
-            renderChannels: () => {
-                const container = document.getElementById('channel-list-container');
-                container.innerHTML = '';
-                
-                if(Store.activeServerId === 'home') return;
-
-                const server = Store.servers.find(s => s.id === Store.activeServerId);
-                
-                // Group by Text/Voice (Simplified for demo)
-                const textHeader = document.createElement('div');
-                textHeader.className = 'category-name';
-                textHeader.innerHTML = '<span style="margin-right:4px;">▼</span> Текстовые каналы';
-                container.appendChild(textHeader);
-
-                server.channels.filter(c => c.type === 'text').forEach(channel => {
-                    const el = document.createElement('div');
-                    el.className = `channel-item ${Store.activeChannelId === channel.id ? 'active' : ''}`;
-                    el.innerHTML = `<span class="channel-hash">#</span> ${channel.name}`;
-                    el.onclick = () => App.switchChannel(channel.id);
-                    container.appendChild(el);
-                });
-
-                const voiceHeader = document.createElement('div');
-                voiceHeader.className = 'category-name';
-                voiceHeader.innerHTML = '<span style="margin-right:4px;">▼</span> Голосовые каналы';
-                container.appendChild(voiceHeader);
-
-                server.channels.filter(c => c.type === 'voice').forEach(channel => {
-                    const el = document.createElement('div');
-                    el.className = 'channel-item';
-                    el.innerHTML = `<span class="channel-hash">🔊</span> ${channel.name}`;
-                    container.appendChild(el);
-                });
-            },
-
-            switchChannel: (channelId) => {
-                Store.activeChannelId = channelId;
-                App.renderChannels();
-                App.renderMessages();
-                
-                const server = Store.servers.find(s => s.id === Store.activeServerId);
-                const channel = server.channels.find(c => c.id === channelId);
-                
-                document.getElementById('chat-title').innerText = channel.name;
-                document.getElementById('chat-desc').innerText = channel.desc || '';
-            },
-
-            renderMessages: () => {
-                const container = document.getElementById('messages-container');
-                container.innerHTML = '';
-                
-                if(Store.activeServerId === 'home') return;
-
-                const server = Store.servers.find(s => s.id === Store.activeServerId);
-                const messages = server.messages[Store.activeChannelId] || [];
-
-                if(messages.length === 0) {
-                    container.innerHTML = `<div style="text-align:center; margin-top:50px; color:var(--text-muted);">Начало истории канала.<br>Будьте первым, кто напишет!</div>`;
-                    return;
-                }
-
-                messages.forEach(msg => {
-                    const el = document.createElement('div');
-                    el.className = 'message';
-                    el.innerHTML = `
-                        <img src="${msg.avatar}" class="msg-avatar">
-                        <div class="msg-content">
-                            <div class="msg-header">
-                                <span class="msg-author">${msg.author}</span>
-                                <span class="msg-time">${msg.time}</span>
-                            </div>
-                            <div class="msg-text">${msg.text}</div>
-                        </div>
-                    `;
-                    container.appendChild(el);
-                });
-                
-                // Scroll to bottom
-                container.scrollTop = container.scrollHeight;
-            },
-
-            sendMessage: (text) => {
-                if(!text.trim()) return;
-                
-                const server = Store.servers.find(s => s.id === Store.activeServerId);
-                if(!server.messages[Store.activeChannelId]) server.messages[Store.activeChannelId] = [];
-
-                const newMessage = {
-                    id: Utils.generateId(),
-                    author: Store.currentUser.username,
-                    text: text,
-                    time: Utils.getTime(),
-                    avatar: Store.currentUser.avatar
-                };
-
-                server.messages[Store.activeChannelId].push(newMessage);
-                App.renderMessages();
-                document.getElementById('message-input').value = '';
-            },
-
-            openCreateServerModal: () => {
-                document.getElementById('create-server-modal').style.display = 'flex';
-            },
-
-            createServer: () => {
-                const nameInput = document.getElementById('new-server-name');
-                const name = nameInput.value || 'Новый Сервер';
-                
-                const newServer = {
-                    id: Utils.generateId(),
-                    name: name,
-                    icon: null,
-                    channels: [
-                        { id: Utils.generateId(), name: 'general', type: 'text', desc: 'Добро пожаловать' }
-                    ],
-                    messages: {}
-                };
-
-                Store.servers.push(newServer);
-                nameInput.value = '';
-                document.getElementById('create-server-modal').style.display = 'none';
-                App.switchServer(newServer.id);
+                if(viewName === 'app') App.init();
             }
         };
 
-        // Initial mock data injection
-        console.log("Nexa Core Loaded.");
+        // --- AUTHENTICATION ---
+        const Auth = {
+            login: (e) => {
+                e.preventDefault();
+                // Simulate API call
+                const btn = e.target.querySelector('button');
+                const originalText = btn.innerText;
+                btn.innerText = 'Загрузка...';
+                setTimeout(() => {
+                    Store.user = {
+                        id: 'u_me',
+                        username: 'DemoUser',
+                        discriminator: '8821',
+                        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
+                        status: 'online'
+                    };
+                    Router.go('app');
+                }, 800);
+            },
+            register: (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button');
+                btn.innerText = 'Создание аккаунта...';
+                setTimeout(() => {
+                    Store.user = {
+                        id: Utils.uuid(),
+                        username: 'User_' + Math.floor(Math.random()*1000), // Auto-generated
+                        discriminator: String(Math.floor(Math.random()*9000)+1000),
+                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Utils.uuid()}`,
+                        status: 'online'
+                    };
+                    Router.go('app');
+                }, 1000);
+            }
+        };
+
+        // --- APPLICATION LOGIC ---
+        const App = {
+            init: () => {
+                if(!Store.user) return;
+                
+                // Set User Data in UI
+                Utils.el('#my-username').innerText = Store.user.username;
+                Utils.el('#my-discriminator').innerText = Store.user.discriminator;
+                Utils.el('#my-avatar').src = Store.user.avatar;
+
+                App.renderServers();
+                App.loadServer(Store.activeServerId);
+                
+                // Input Listener
+                Utils.el('#msg-input').addEventListener('keypress', (e) => {
+                    if(e.key === 'Enter' && e.target.value.trim()) {
+                        App.sendMessage(e.target.value);
+                        e.target.value = '';
+                    }
+                });
+            },
+
+            renderServers: () => {
+                const container = Utils.el('#server-list-rail');
+                container.innerHTML = '';
+                Store.servers.forEach(srv => {
+                    const div = document.createElement('div');
+                    div.className = `nav-item ${Store.activeServerId === srv.id ? 'active' : ''}`;
+                    div.innerHTML = srv.name.substring(0,2).toUpperCase();
+                    div.onclick = () => App.loadServer(srv.id);
+                    container.appendChild(div);
+                });
+            },
+
+            loadServer: (id) => {
+                Store.activeServerId = id;
+                const srv = Store.servers.find(s => s.id === id);
+                
+                // Update Header
+                Utils.el('#current-server-name span').innerText = srv.name;
+                
+                // Render Channels
+                const chList = Utils.el('#channel-list');
+                chList.innerHTML = `<div class="channel-cat">▼ Текстовые каналы</div>`;
+                
+                srv.channels.filter(c => c.type === 'text').forEach(ch => {
+                    const row = document.createElement('div');
+                    row.className = `channel-row ${Store.activeChannelId === ch.id ? 'active' : ''}`;
+                    row.innerHTML = `<span class="ch-icon">#</span> ${ch.name}`;
+                    row.onclick = () => App.loadChannel(ch.id);
+                    chList.appendChild(row);
+                });
+
+                // Load first channel if none active or invalid
+                if(!srv.channels.find(c => c.id === Store.activeChannelId)) {
+                    App.loadChannel(srv.channels[0].id);
+                } else {
+                    App.loadChannel(Store.activeChannelId);
+                }
+                
+                App.renderServers(); // Refresh active state
+            },
+
+            loadChannel: (id) => {
+                Store.activeChannelId = id;
+                const srv = Store.servers.find(s => s.id === Store.activeServerId);
+                const ch = srv.channels.find(c => c.id === id);
+                
+                Utils.el('#chat-title').innerText = ch.name;
+                Utils.el('#chat-desc').innerText = ch.desc || '';
+                
+                // Re-render channel list for active class
+                App.loadServer(Store.activeServerId); 
+
+                // Render Messages
+                const feed = Utils.el('#message-feed');
+                feed.innerHTML = '';
+                
+                const msgs = srv.messages[id] || [];
+                msgs.forEach(m => App.appendMessageToDOM(m));
+                
+                feed.scrollTop = feed.scrollHeight;
+            },
+
+            appendMessageToDOM: (msg) => {
+                const feed = Utils.el('#message-feed');
+                const div = document.createElement('div');
+                div.className = 'msg slide-up';
+                div.innerHTML = `
+                    <img src="${msg.avatar}" class="msg-avatar" oncontextmenu="UI.showCtx(event)">
+                    <div class="msg-body">
+                        <div class="msg-head">
+                            <span class="msg-author" oncontextmenu="UI.showCtx(event)">${msg.author}</span>
+                            <span class="msg-ts">${msg.ts}</span>
+                        </div>
+                        <div class="msg-content">${msg.content}</div>
+                    </div>
+                `;
+                feed.appendChild(div);
+                feed.scrollTop = feed.scrollHeight;
+            },
+
+            sendMessage: (text) => {
+                const srv = Store.servers.find(s => s.id === Store.activeServerId);
+                if(!srv.messages[Store.activeChannelId]) srv.messages[Store.activeChannelId] = [];
+                
+                const msgObj = {
+                    id: Utils.uuid(),
+                    author: Store.user.username,
+                    content: text,
+                    ts: Utils.time(),
+                    avatar: Store.user.avatar
+                };
+                
+                srv.messages[Store.activeChannelId].push(msgObj);
+                App.appendMessageToDOM(msgObj);
+            },
+
+            createServer: () => {
+                const name = Utils.el('#new-server-name').value || 'Новый Сервер';
+                const newSrv = {
+                    id: Utils.uuid(),
+                    name: name,
+                    channels: [{id: Utils.uuid(), name:'general', type:'text', desc:''}],
+                    messages: {}
+                };
+                Store.servers.push(newSrv);
+                Modals.closeAll();
+                App.loadServer(newSrv.id);
+            },
+
+            saveProfile: () => {
+                const newName = Utils.el('#settings-username-input').value;
+                if(newName) {
+                    Store.user.username = newName;
+                    Utils.el('#my-username').innerText = newName;
+                    Modals.closeAll();
+                }
+            }
+        };
+
+        // --- UI & MODALS ---
+        const Modals = {
+            openCreateServer: () => Utils.el('#modal-create-server').classList.add('open'),
+            openSettings: () => {
+                Utils.el('#settings-name').innerText = Store.user.username;
+                Utils.el('#settings-avatar').src = Store.user.avatar;
+                Utils.el('#settings-username-input').value = Store.user.username;
+                Utils.el('#modal-settings').classList.add('open');
+            },
+            closeAll: () => document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('open'))
+        };
+
+        const UI = {
+            showCtx: (e) => {
+                e.preventDefault();
+                const menu = Utils.el('#ctx-menu');
+                menu.style.display = 'block';
+                menu.style.left = e.pageX + 'px';
+                menu.style.top = e.pageY + 'px';
+            }
+        };
+
+        // Global click to hide context menu
+        document.addEventListener('click', () => Utils.el('#ctx-menu').style.display = 'none');
+
+        // --- LANDING ANIMATION (CANVAS) ---
+        const initLandingAnim = () => {
+            const canvas = document.getElementById('canvas-bg');
+            const ctx = canvas.getContext('2d');
+            let w, h, particles = [];
+            
+            const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.size = Math.random() * 2 + 1;
+                }
+                update() {
+                    this.x += this.vx; this.y += this.vy;
+                    if(this.x < 0 || this.x > w) this.vx *= -1;
+                    if(this.y < 0 || this.y > h) this.vy *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            }
+
+            for(let i=0; i<60; i++) particles.push(new Particle());
+
+            const animate = () => {
+                ctx.clearRect(0, 0, w, h);
+                // Draw connections
+                ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+                ctx.lineWidth = 1;
+                for(let i=0; i<particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                    for(let j=i; j<particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            };
+            animate();
+        };
+
+        // Start
+        initLandingAnim();
+
     </script>
 </body>
 </html>
