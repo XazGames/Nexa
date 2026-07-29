@@ -1,150 +1,331 @@
 const WebSocket = require('ws');
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcrypt');
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 
+// --- БД ---
+const db = new sqlite3.Database(path.join(__dirname, 'database.sqlite'));
+
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      name TEXT UNIQUE,
+      password TEXT,
+      token TEXT
+    )
+  `);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS channels (
+      id TEXT PRIMARY KEY,
+      name TEXT,
+      isPrivate INTEGER,
+      ownerId TEXT
+    )
+  `);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS channel_members (
+      channelId TEXT,
+      userId TEXT,
+      PRIMARY KEY (channelId, userId)
+    )
+  `);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS messages (
+      id TEXT PRIMARY KEY,
+      channelId TEXT,
+      userId TEXT,
+      userName TEXT,
+      text TEXT,
+      timestamp INTEGER
+    )
+  `);
+  // Создаём главный канал, если его нет
+  db.get("SELECT id FROM channels WHERE name = 'Главный'", (err, row) => {
+    if (!row) {
+      const mainId = uuidv4();
+      db.run("INSERT INTO channels (id, name, isPrivate, ownerId) VALUES (?, ?, ?, ?)", [mainId, 'Главный', 0, null]);
+    }
+  });
+});
+
+// --- WebSocket сервер ---
 const wss = new WebSocket.Server({ port: 8080 });
 
-// Хранилище (в памяти – для демо, замени на БД)
-const users = {};                 // token -> { id, name, channels }
-const channels = {};             // channelId -> { id, name, isPrivate, members: [userId], messages: [{ id, userId, userName, text, timestamp }] }
+// Храним клиентов: ws -> { userId, channelId, typingTimeout }
+const clients = new Map();
 
-// Начальный канал
-const mainChannelId = uuidv4();
-channels[mainChannelId] = {
-  id: mainChannelId,
-  name: 'Главный',
-  isPrivate: false,
-  members: [],
-  messages: [],
-};
-
-// Утилиты
-function broadcast(channelId, data) {
-  wss.clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN && client.channelId === channelId) {
-      client.send(JSON.stringify(data));
-    }
+// --- Вспомогательные функции для БД (промисы) ---
+function dbGet(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => { if (err) reject(err); else resolve(row); });
+  });
+}
+function dbAll(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => { if (err) reject(err); else resolve(rows); });
+  });
+}
+function dbRun(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) { if (err) reject(err); else resolve(this); });
   });
 }
 
-wss.on('connection', (ws) => {
-  ws.token = null;
-  ws.userId = null;
-  ws.channelId = mainChannelId; // по умолчанию
+// --- Отправка сообщения клиенту ---
+function sendTo(ws, data) {
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(data));
+  }
+}
 
-  ws.on('message', (raw) => {
+// --- Рассылка в канал (всем участникам) ---
+async function broadcastToChannel(channelId, data, excludeWs = null) {
+  const members = await dbAll("SELECT userId FROM channel_members WHERE channelId = ?", [channelId]);
+  const userIds = members.map(m => m.userId);
+  for (const [ws, info] of clients) {
+    if (ws === excludeWs) continue;
+    if (info && userIds.includes(info.userId)) {
+      sendTo(ws, data);
+    }
+  }
+}
+
+// --- Обработка сообщений от клиента ---
+wss.on('connection', (ws) => {
+  const clientInfo = { userId: null, channelId: null, typingTimeout: null };
+  clients.set(ws, clientInfo);
+
+  ws.on('message', async (raw) => {
     let msg;
     try { msg = JSON.parse(raw); } catch (e) { return; }
-
     const { type, payload } = msg;
 
     // --- АВТОРИЗАЦИЯ ---
     if (type === 'auth') {
       const { action, name, password } = payload;
-      // В демо пароли не хешируются, для продакшена используй bcrypt
-      if (action === 'register') {
-        if (users[name]) {
-          ws.send(JSON.stringify({ type: 'auth_result', payload: { success: false, error: 'Пользователь уже существует' } }));
+      try {
+        if (action === 'register') {
+          const existing = await dbGet("SELECT id FROM users WHERE name = ?", [name]);
+          if (existing) {
+            sendTo(ws, { type: 'auth_result', payload: { success: false, error: 'Имя уже занято' } });
+            return;
+          }
+          const id = uuidv4();
+          const token = uuidv4();
+          const hash = await bcrypt.hash(password, 10);
+          await dbRun("INSERT INTO users (id, name, password, token) VALUES (?, ?, ?, ?)", [id, name, hash, token]);
+          // Добавляем в главный канал
+          const main = await dbGet("SELECT id FROM channels WHERE name = 'Главный'");
+          if (main) {
+            await dbRun("INSERT OR IGNORE INTO channel_members (channelId, userId) VALUES (?, ?)", [main.id, id]);
+          }
+          clientInfo.userId = id;
+          sendTo(ws, { type: 'auth_result', payload: { success: true, token, user: { id, name } } });
+          sendChannelsList(ws);
+          sendChannelHistory(ws, main ? main.id : null);
           return;
         }
-        const userId = uuidv4();
-        const token = uuidv4();
-        users[name] = { id: userId, name, password, token };
-        ws.token = token;
-        ws.userId = userId;
-        ws.send(JSON.stringify({ type: 'auth_result', payload: { success: true, token, user: { id: userId, name } } }));
-        // Отправить список каналов
-        ws.send(JSON.stringify({ type: 'channels_list', payload: Object.values(channels).map(c => ({ id: c.id, name: c.name, isPrivate: c.isPrivate })) }));
-        return;
-      }
-      if (action === 'login') {
-        const user = users[name];
-        if (!user || user.password !== password) {
-          ws.send(JSON.stringify({ type: 'auth_result', payload: { success: false, error: 'Неверные логин или пароль' } }));
+        if (action === 'login') {
+          const user = await dbGet("SELECT * FROM users WHERE name = ?", [name]);
+          if (!user) {
+            sendTo(ws, { type: 'auth_result', payload: { success: false, error: 'Неверные данные' } });
+            return;
+          }
+          const match = await bcrypt.compare(password, user.password);
+          if (!match) {
+            sendTo(ws, { type: 'auth_result', payload: { success: false, error: 'Неверные данные' } });
+            return;
+          }
+          const token = uuidv4();
+          await dbRun("UPDATE users SET token = ? WHERE id = ?", [token, user.id]);
+          clientInfo.userId = user.id;
+          sendTo(ws, { type: 'auth_result', payload: { success: true, token, user: { id: user.id, name: user.name } } });
+          sendChannelsList(ws);
+          // Отправить текущий канал (последний использованный или главный)
+          const main = await dbGet("SELECT id FROM channels WHERE name = 'Главный'");
+          if (main) {
+            clientInfo.channelId = main.id;
+            sendChannelHistory(ws, main.id);
+          }
           return;
         }
-        ws.token = user.token;
-        ws.userId = user.id;
-        ws.send(JSON.stringify({ type: 'auth_result', payload: { success: true, token: user.token, user: { id: user.id, name } } }));
-        ws.send(JSON.stringify({ type: 'channels_list', payload: Object.values(channels).map(c => ({ id: c.id, name: c.name, isPrivate: c.isPrivate })) }));
-        return;
+      } catch (err) {
+        sendTo(ws, { type: 'auth_result', payload: { success: false, error: 'Ошибка сервера' } });
+        console.error(err);
       }
-    }
-
-    // Проверка авторизации для остальных действий
-    if (!ws.token || !users[Object.keys(users).find(u => users[u].token === ws.token)]) {
-      ws.send(JSON.stringify({ type: 'error', payload: 'Не авторизован' }));
       return;
     }
 
-    const currentUser = Object.values(users).find(u => u.token === ws.token);
+    // --- Проверка авторизации для остальных команд ---
+    if (!clientInfo.userId) {
+      sendTo(ws, { type: 'error', payload: 'Не авторизован' });
+      return;
+    }
 
-    // --- СОЗДАНИЕ КАНАЛА ---
-    if (type === 'create_channel') {
-      const { name, isPrivate } = payload;
-      const id = uuidv4();
-      channels[id] = {
-        id,
-        name,
-        isPrivate,
-        members: [currentUser.id],
-        messages: [],
-      };
-      // Уведомить всех клиентов о новом канале
-      wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({ type: 'channels_list', payload: Object.values(channels).map(c => ({ id: c.id, name: c.name, isPrivate: c.isPrivate })) }));
-        }
-      });
-      ws.send(JSON.stringify({ type: 'channel_created', payload: { id, name, isPrivate } }));
+    // --- ПОЛУЧИТЬ СПИСОК КАНАЛОВ ---
+    if (type === 'get_channels') {
+      sendChannelsList(ws);
+      return;
     }
 
     // --- ПРИСОЕДИНИТЬСЯ К КАНАЛУ ---
     if (type === 'join_channel') {
       const { channelId } = payload;
-      if (!channels[channelId]) {
-        ws.send(JSON.stringify({ type: 'error', payload: 'Канал не найден' }));
+      // Проверяем, есть ли канал и является ли участником
+      const channel = await dbGet("SELECT * FROM channels WHERE id = ?", [channelId]);
+      if (!channel) {
+        sendTo(ws, { type: 'error', payload: 'Канал не найден' });
         return;
       }
-      const channel = channels[channelId];
-      if (channel.isPrivate && !channel.members.includes(currentUser.id)) {
-        // Для приватных каналов просто запрещаем (можно добавить приглашения)
-        ws.send(JSON.stringify({ type: 'error', payload: 'Доступ запрещён' }));
+      const isMember = await dbGet("SELECT * FROM channel_members WHERE channelId = ? AND userId = ?", [channelId, clientInfo.userId]);
+      if (channel.isPrivate && !isMember) {
+        sendTo(ws, { type: 'error', payload: 'Доступ запрещён' });
         return;
       }
-      ws.channelId = channelId;
-      if (!channel.members.includes(currentUser.id)) {
-        channel.members.push(currentUser.id);
+      // Добавляем в участники, если ещё нет
+      if (!isMember) {
+        await dbRun("INSERT INTO channel_members (channelId, userId) VALUES (?, ?)", [channelId, clientInfo.userId]);
       }
-      // Отправить историю сообщений канала
-      ws.send(JSON.stringify({ type: 'channel_history', payload: { channelId, messages: channel.messages } }));
+      clientInfo.channelId = channelId;
+      sendChannelHistory(ws, channelId);
+      return;
     }
 
     // --- ОТПРАВКА СООБЩЕНИЯ ---
     if (type === 'send_message') {
       const { text } = payload;
-      const channel = channels[ws.channelId];
-      if (!channel) return;
-      const message = {
-        id: uuidv4(),
-        userId: currentUser.id,
-        userName: currentUser.name,
-        text,
-        timestamp: Date.now(),
-      };
-      channel.messages.push(message);
-      // Отправить всем в этом канале
-      broadcast(ws.channelId, { type: 'new_message', payload: message });
+      const channelId = clientInfo.channelId;
+      if (!channelId) return;
+      const user = await dbGet("SELECT name FROM users WHERE id = ?", [clientInfo.userId]);
+      const messageId = uuidv4();
+      const timestamp = Date.now();
+      await dbRun(
+        "INSERT INTO messages (id, channelId, userId, userName, text, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
+        [messageId, channelId, clientInfo.userId, user.name, text, timestamp]
+      );
+      const messageData = { id: messageId, userId: clientInfo.userId, userName: user.name, text, timestamp };
+      // Рассылаем всем в канале
+      broadcastToChannel(channelId, { type: 'new_message', payload: messageData }, ws);
+      // Отправляем подтверждение отправителю (чтобы он сразу увидел)
+      sendTo(ws, { type: 'new_message', payload: messageData });
+      return;
     }
 
-    // --- ПОЛУЧИТЬ СПИСОК КАНАЛОВ ---
-    if (type === 'get_channels') {
-      ws.send(JSON.stringify({ type: 'channels_list', payload: Object.values(channels).map(c => ({ id: c.id, name: c.name, isPrivate: c.isPrivate })) }));
+    // --- СОЗДАНИЕ КАНАЛА ---
+    if (type === 'create_channel') {
+      const { name, isPrivate } = payload;
+      if (!name.trim()) return;
+      const id = uuidv4();
+      await dbRun("INSERT INTO channels (id, name, isPrivate, ownerId) VALUES (?, ?, ?, ?)", [id, name, isPrivate ? 1 : 0, clientInfo.userId]);
+      // Добавляем создателя
+      await dbRun("INSERT INTO channel_members (channelId, userId) VALUES (?, ?)", [id, clientInfo.userId]);
+      // Уведомляем всех клиентов об обновлении списка каналов
+      broadcastChannelsList();
+      sendTo(ws, { type: 'channel_created', payload: { id, name, isPrivate } });
+      return;
     }
+
+    // --- ПРИГЛАШЕНИЕ В ПРИВАТНЫЙ КАНАЛ ---
+    if (type === 'invite_to_channel') {
+      const { channelId, userName } = payload;
+      // Проверить, что пользователь - владелец канала
+      const channel = await dbGet("SELECT ownerId FROM channels WHERE id = ?", [channelId]);
+      if (!channel || channel.ownerId !== clientInfo.userId) {
+        sendTo(ws, { type: 'error', payload: 'Только владелец может приглашать' });
+        return;
+      }
+      const invitedUser = await dbGet("SELECT id FROM users WHERE name = ?", [userName]);
+      if (!invitedUser) {
+        sendTo(ws, { type: 'error', payload: 'Пользователь не найден' });
+        return;
+      }
+      // Проверить, не состоит ли уже
+      const existing = await dbGet("SELECT * FROM channel_members WHERE channelId = ? AND userId = ?", [channelId, invitedUser.id]);
+      if (existing) {
+        sendTo(ws, { type: 'error', payload: 'Уже в канале' });
+        return;
+      }
+      await dbRun("INSERT INTO channel_members (channelId, userId) VALUES (?, ?)", [channelId, invitedUser.id]);
+      // Уведомить приглашённого, если онлайн
+      for (const [clientWs, info] of clients) {
+        if (info && info.userId === invitedUser.id) {
+          sendChannelsList(clientWs);
+          // Если он в этом канале, обновить историю
+          if (info.channelId === channelId) {
+            sendChannelHistory(clientWs, channelId);
+          }
+        }
+      }
+      sendTo(ws, { type: 'invite_success', payload: { channelId, userName } });
+      return;
+    }
+
+    // --- ПЕЧАТАЕТ (typing) ---
+    if (type === 'typing') {
+      const channelId = clientInfo.channelId;
+      if (!channelId) return;
+      const user = await dbGet("SELECT name FROM users WHERE id = ?", [clientInfo.userId]);
+      broadcastToChannel(channelId, { type: 'typing', payload: { userId: clientInfo.userId, userName: user.name } }, ws);
+      // Очищаем таймаут
+      if (clientInfo.typingTimeout) clearTimeout(clientInfo.typingTimeout);
+      clientInfo.typingTimeout = setTimeout(() => {
+        broadcastToChannel(channelId, { type: 'typing_stop', payload: { userId: clientInfo.userId } }, null);
+      }, 3000);
+      return;
+    }
+
+    // --- ВЫХОД (logout) обрабатывается на клиенте, просто закрываем сокет ---
   });
 
   ws.on('close', () => {
-    // Ничего не делаем
+    clients.delete(ws);
   });
 });
 
-console.log('Nexa server running on ws://localhost:8080');
+// --- Вспомогательные функции отправки ---
+
+async function sendChannelsList(ws) {
+  const channels = await dbAll(`
+    SELECT c.id, c.name, c.isPrivate,
+      (SELECT COUNT(*) FROM channel_members WHERE channelId = c.id) as memberCount
+    FROM channels c
+    ORDER BY c.name
+  `);
+  // Добавим флаг, состоит ли пользователь в канале
+  const userId = clients.get(ws)?.userId;
+  if (userId) {
+    for (const ch of channels) {
+      const member = await dbGet("SELECT * FROM channel_members WHERE channelId = ? AND userId = ?", [ch.id, userId]);
+      ch.isMember = !!member;
+    }
+  }
+  sendTo(ws, { type: 'channels_list', payload: channels });
+}
+
+async function broadcastChannelsList() {
+  for (const [ws, info] of clients) {
+    if (info && info.userId) {
+      sendChannelsList(ws);
+    }
+  }
+}
+
+async function sendChannelHistory(ws, channelId) {
+  if (!channelId) return;
+  const messages = await dbAll(
+    "SELECT id, userId, userName, text, timestamp FROM messages WHERE channelId = ? ORDER BY timestamp ASC LIMIT 100",
+    [channelId]
+  );
+  sendTo(ws, { type: 'channel_history', payload: { channelId, messages } });
+  // Также отправить текущий список участников (для отображения)
+  const members = await dbAll(`
+    SELECT u.id, u.name FROM users u
+    JOIN channel_members cm ON cm.userId = u.id
+    WHERE cm.channelId = ?
+  `, [channelId]);
+  sendTo(ws, { type: 'channel_members', payload: { channelId, members } });
+}
+
+console.log('🚀 Nexa server running on ws://localhost:8080');
