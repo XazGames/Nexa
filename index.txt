@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Nexa</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body {
+      background: #0d0d14;
+      color: #e4e4f0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #app {
+      width: 100%;
+      max-width: 480px;
+      height: 100vh;
+      max-height: 900px;
+      background: #181825;
+      border-radius: 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.6s ease;
+    }
+    @media (min-width: 600px) {
+      #app { border-radius: 32px; height: 90vh; }
+    }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(40px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes slideUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Аутентификация */
+    #auth {
+      display: flex;
+      flex-direction: column;
+      padding: 40px 24px;
+      height: 100%;
+      justify-content: center;
+    }
+    #auth h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    #auth p {
+      text-align: center;
+      color: #8888aa;
+      margin-bottom: 32px;
+    }
+    #auth input {
+      background: #2a2a3e;
+      border: none;
+      padding: 16px 18px;
+      border-radius: 16px;
+      font-size: 1rem;
+      color: #e4e4f0;
+      margin-bottom: 16px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    #auth input:focus { background: #33334a; box-shadow: 0 0 0 3px #7c3aed55; }
+    #auth .btn {
+      background: #7c3aed;
+      border: none;
+      padding: 16px;
+      border-radius: 16px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    #auth .btn:hover { background: #6d28d9; transform: scale(1.02); }
+    #auth .btn:active { transform: scale(0.97); }
+    #auth .toggle {
+      text-align: center;
+      margin-top: 20px;
+      color: #8888aa;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    #auth .toggle:hover { color: #a78bfa; }
+    #auth .error {
+      color: #f87171;
+      text-align: center;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      animation: shake 0.3s;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    /* Чат */
+    #chat {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      background: #181825;
+    }
+    #chat-header {
+      padding: 16px 20px;
+      background: #22223a;
+      border-bottom: 1px solid #33334a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 12px;
+    }
+    #chat-header h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #chat-header .channel-name {
+      color: #a78bfa;
+    }
+    #chat-header .menu-btn {
+      background: none;
+      border: none;
+      color: #8888aa;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+      padding: 0 8px;
+    }
+    #chat-header .menu-btn:hover { transform: rotate(90deg); color: #fff; }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #181825;
+      scroll-behavior: smooth;
+    }
+    #messages .message {
+      background: #2a2a3e;
+      padding: 12px 16px;
+      border-radius: 18px;
+      max-width: 85%;
+      align-self: flex-start;
+      animation: slideUp 0.25s ease;
+      word-wrap: break-word;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+    #messages .message.own {
+      background: #7c3aed;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    #messages .message .name {
+      font-size: 0.75rem;
+      color: #a78bfa;
+      font-weight: 600;
+      margin-bottom: 2px;
+      opacity: 0.8;
+    }
+    #messages .message .text { font-size: 1rem; line-height: 1.4; }
+    #messages .message .time {
+      font-size: 0.6rem;
+      color: #8888aa;
+      text-align: right;
+      margin-top: 4px;
+      opacity: 0.6;
+    }
+    .message-enter {
+      opacity: 0;
+      transform: scale(0.9) translateY(10px);
+    }
+
+    #input-area {
+      display: flex;
+      gap: 10px;
+      padding: 12px 20px 20px;
+      background: #1e1e32;
+      border-top: 1px solid #33334a;
+      flex-shrink: 0;
+    }
+    #input-area input {
+      flex: 1;
+      background: #2a2a3e;
+      border: none;
+      border-radius: 24px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      color: #e4e4f0;
+      outline: none;
+      transition: all 0.2s;
+    }
+    #input-area input:focus { background: #33334a; box-shadow: 0 0 0 3px #7c3aed55; }
+    #input-area button {
+      background: #7c3aed;
+      border: none;
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      color: #fff;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    #input-area button:hover { background: #6d28d9; transform: scale(1.05); }
+    #input-area button:active { transform: scale(0.92); }
+
+    /* Боковое меню (каналы) */
+    #sidebar {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+      animation: fadeIn 0.3s;
+    }
+    #sidebar.open { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    #sidebar-content {
+      width: 80%;
+      max-width: 340px;
+      height: 100%;
+      background: #1e1e32;
+      padding: 30px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 4px 0 30px rgba(0,0,0,0.6);
+      animation: slideRight 0.3s ease;
+    }
+    @keyframes slideRight {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+    #sidebar-content h3 {
+      font-size: 1.8rem;
+      color: #a78bfa;
+      margin-bottom: 8px;
+    }
+    #sidebar-content .close-btn {
+      background: none;
+      border: none;
+      color: #8888aa;
+      font-size: 2rem;
+      align-self: flex-end;
+      cursor: pointer;
+    }
+    #sidebar-content .close-btn:hover { color: #fff; }
+    #channel-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    #channel-list li {
+      background: #2a2a3e;
+      padding: 14px 18px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 500;
+    }
+    #channel-list li:hover { background: #3a3a56; transform: translateX(6px); }
+    #channel-list li .private-badge {
+      font-size: 0.7rem;
+      background: #7c3aed;
+      padding: 2px 12px;
+      border-radius: 20px;
+      color: #fff;
+    }
+    #sidebar-content .create-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    #sidebar-content .create-form input {
+      flex: 1;
+      background: #2a2a3e;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 16px;
+      color: #e4e4f0;
+      outline: none;
+    }
+    #sidebar-content .create-form button {
+      background: #7c3aed;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #sidebar-content .create-form button:hover { background: #6d28d9; }
+    .toggle-private {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #8888aa;
+      font-size: 0.9rem;
+    }
+    .toggle-private input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #7c3aed;
+    }
+    #logout-btn {
+      background: none;
+      border: none;
+      color: #f87171;
+      padding: 12px 0;
+      text-align: left;
+      font-size: 1rem;
+      cursor: pointer;
+      border-top: 1px solid #33334a;
+      margin-top: auto;
+      transition: color 0.2s;
+    }
+    #logout-btn:hover { color: #ff8a8a; }
+    .empty-msg {
+      color: #666688;
+      text-align: center;
+      padding: 30px 0;
+      font-style: italic;
+    }
+
+    /* Scrollbar */
+    #messages::-webkit-scrollbar, #channel-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    #messages::-webkit-scrollbar-track, #channel-list::-webkit-scrollbar-track {
+      background: #181825;
+    }
+    #messages::-webkit-scrollbar-thumb, #channel-list::-webkit-scrollbar-thumb {
+      background: #7c3aed;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Авторизация -->
+  <div id="auth">
+    <h1>Nexa</h1>
+    <p>Войди, чтобы продолжить</p>
+    <input type="text" id="auth-name" placeholder="Имя пользователя" autocomplete="username">
+    <input type="password" id="auth-pass" placeholder="Пароль" autocomplete="current-password">
+    <button class="btn" id="auth-btn">Войти</button>
+    <div class="toggle" id="auth-toggle">Нет аккаунта? Зарегистрироваться</div>
+    <div id="auth-error" class="error"></div>
+  </div>
+
+  <!-- Чат -->
+  <div id="chat">
+    <div id="chat-header">
+      <h2><span class="channel-name" id="current-channel-name">Главный</span></h2>
+      <button class="menu-btn" id="menu-toggle">☰</button>
+    </div>
+    <div id="messages"></div>
+    <div id="input-area">
+      <input type="text" id="msg-input" placeholder="Сообщение..." autocomplete="off">
+      <button id="send-btn">➤</button>
+    </div>
+  </div>
+
+  <!-- Боковое меню -->
+  <div id="sidebar">
+    <div id="sidebar-content">
+      <button class="close-btn" id="sidebar-close">✕</button>
+      <h3>Каналы</h3>
+      <ul id="channel-list"></ul>
+      <div class="create-form">
+        <input type="text" id="new-channel-name" placeholder="Название канала">
+        <button id="create-channel-btn">+</button>
+      </div>
+      <div class="toggle-private">
+        <input type="checkbox" id="channel-private"> Приватный
+      </div>
+      <button id="logout-btn">🚪 Выйти</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // --- CLIENT ---
+  const authDiv = document.getElementById('auth');
+  const chatDiv = document.getElementById('chat');
+  const authName = document.getElementById('auth-name');
+  const authPass = document.getElementById('auth-pass');
+  const authBtn = document.getElementById('auth-btn');
+  const authToggle = document.getElementById('auth-toggle');
+  const authError = document.getElementById('auth-error');
+  const messagesDiv = document.getElementById('messages');
+  const msgInput = document.getElementById('msg-input');
+  const sendBtn = document.getElementById('send-btn');
+  const channelList = document.getElementById('channel-list');
+  const currentChannelName = document.getElementById('current-channel-name');
+  const menuToggle = document.getElementById('menu-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarClose = document.getElementById('sidebar-close');
+  const newChannelName = document.getElementById('new-channel-name');
+  const createChannelBtn = document.getElementById('create-channel-btn');
+  const channelPrivate = document.getElementById('channel-private');
+  const logoutBtn = document.getElementById('logout-btn');
+
+  let ws = null;
+  let token = null;
+  let currentUser = null;
+  let currentChannelId = null;
+  let isLoginMode = true;
+
+  // --- WebSocket подключение ---
+  function connect() {
+    const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = location.hostname || 'localhost';
+    const port = 8080; // если на другом порту, укажи
+    ws = new WebSocket(`${protocol}//${host}:${port}`);
+    ws.onopen = () => console.log('Connected to Nexa server');
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      handleServerMessage(data);
+    };
+    ws.onclose = () => {
+      setTimeout(connect, 3000);
+    };
+    ws.onerror = (err) => console.error('WS error', err);
+  }
+
+  // --- Обработка сообщений от сервера ---
+  function handleServerMessage(data) {
+    const { type, payload } = data;
+    switch (type) {
+      case 'auth_result':
+        if (payload.success) {
+          token = payload.token;
+          currentUser = payload.user;
+          showChat();
+          authError.textContent = '';
+        } else {
+          authError.textContent = payload.error;
+        }
+        break;
+      case 'channels_list':
+        renderChannelList(payload);
+        break;
+      case 'channel_history':
+        if (payload.channelId === currentChannelId) {
+          messagesDiv.innerHTML = '';
+          payload.messages.forEach(msg => appendMessage(msg));
+          scrollToBottom();
+        }
+        break;
+      case 'new_message':
+        if (payload.channelId === currentChannelId) {
+          appendMessage(payload.message);
+          scrollToBottom();
+        }
+        break;
+      case 'channel_created':
+        // просто обновим список
+        ws.send(JSON.stringify({ type: 'get_channels' }));
+        break;
+      case 'error':
+        alert(payload);
+        break;
+      default:
+        console.log('Unknown message', data);
+    }
+  }
+
+  // --- UI ---
+  function showChat() {
+    authDiv.style.display = 'none';
+    chatDiv.style.display = 'flex';
+    // Запросить список каналов
+    ws.send(JSON.stringify({ type: 'get_channels' }));
+    // По умолчанию присоединиться к Главному (id будет получено из списка)
+  }
+
+  function appendMessage(msg) {
+    const div = document.createElement('div');
+    div.className = 'message';
+    if (msg.userId === currentUser?.id) div.classList.add('own');
+    div.innerHTML = `
+      <div class="name">${msg.userName || 'Аноним'}</div>
+      <div class="text">${msg.text}</div>
+      <div class="time">${new Date(msg.timestamp).toLocaleTimeString()}</div>
+    `;
+    messagesDiv.appendChild(div);
+  }
+
+  function scrollToBottom() {
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  function renderChannelList(channels) {
+    channelList.innerHTML = '';
+    channels.forEach(ch => {
+      const li = document.createElement('li');
+      li.innerHTML = `${ch.name} ${ch.isPrivate ? '<span class="private-badge">🔒</span>' : ''}`;
+      li.dataset.id = ch.id;
+      li.addEventListener('click', () => {
+        switchChannel(ch.id);
+        sidebar.classList.remove('open');
+      });
+      channelList.appendChild(li);
+    });
+    // Если текущий канал не установлен, установить первый (обычно Главный)
+    if (!currentChannelId && channels.length > 0) {
+      const main = channels.find(c => c.name === 'Главный') || channels[0];
+      switchChannel(main.id);
+    }
+  }
+
+  function switchChannel(channelId) {
+    currentChannelId = channelId;
+    // Найти имя канала
+    const items = channelList.querySelectorAll('li');
+    let name = 'Канал';
+    items.forEach(li => {
+      if (li.dataset.id === channelId) {
+        name = li.textContent.trim().replace('🔒', '').trim();
+      }
+    });
+    currentChannelName.textContent = name;
+    messagesDiv.innerHTML = '';
+    ws.send(JSON.stringify({ type: 'join_channel', payload: { channelId } }));
+  }
+
+  // --- Обработчики событий ---
+
+  // Аутентификация
+  authBtn.addEventListener('click', () => {
+    const name = authName.value.trim();
+    const pass = authPass.value.trim();
+    if (!name || !pass) { authError.textContent = 'Заполните все поля'; return; }
+    const action = isLoginMode ? 'login' : 'register';
+    ws.send(JSON.stringify({
+      type: 'auth',
+      payload: { action, name, password: pass }
+    }));
+  });
+
+  authToggle.addEventListener('click', () => {
+    isLoginMode = !isLoginMode;
+    authBtn.textContent = isLoginMode ? 'Войти' : 'Зарегистрироваться';
+    authToggle.textContent = isLoginMode ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти';
+    authError.textContent = '';
+  });
+
+  // Отправка сообщения
+  sendBtn.addEventListener('click', sendMessage);
+  msgInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  function sendMessage() {
+    const text = msgInput.value.trim();
+    if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+    ws.send(JSON.stringify({
+      type: 'send_message',
+      payload: { text }
+    }));
+    msgInput.value = '';
+    msgInput.focus();
+  }
+
+  // Меню
+  menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+  });
+  sidebarClose.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+  });
+  sidebar.addEventListener('click', (e) => {
+    if (e.target === sidebar) sidebar.classList.remove('open');
+  });
+
+  // Создание канала
+  createChannelBtn.addEventListener('click', () => {
+    const name = newChannelName.value.trim();
+    if (!name) return;
+    const isPrivate = channelPrivate.checked;
+    ws.send(JSON.stringify({
+      type: 'create_channel',
+      payload: { name, isPrivate }
+    }));
+    newChannelName.value = '';
+    channelPrivate.checked = false;
+  });
+
+  // Выход
+  logoutBtn.addEventListener('click', () => {
+    if (ws) ws.close();
+    token = null;
+    currentUser = null;
+    currentChannelId = null;
+    chatDiv.style.display = 'none';
+    authDiv.style.display = 'flex';
+    authName.value = '';
+    authPass.value = '';
+    authError.textContent = '';
+    messagesDiv.innerHTML = '';
+    sidebar.classList.remove('open');
+    connect();
+  });
+
+  // Запуск
+  connect();
+</script>
+</body>
+</html>
